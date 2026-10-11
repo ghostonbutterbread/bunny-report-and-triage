@@ -39,7 +39,7 @@ class SkillContract(unittest.TestCase):
         for phrase in (
             "### Summary", "### Reproduction", "### Impact", "### Remediation",
             "Paste test before delivery", "Source-fidelity test before delivery",
-            "Preserve quoted evidence", "CVSS:        X.X",
+            "Preserve material source evidence", "CVSS:        X.X",
             "Bounty Est:  [$range]", "If GREEN: tell them to submit.",
         ):
             with self.subTest(phrase=phrase):
@@ -76,7 +76,7 @@ class SkillContract(unittest.TestCase):
             "discover target-specific IDs", "send the dependent requests",
             "verify the claimed effect", "#### Manual Reproduction",
             "minimal required flags", "same finding and observed effect",
-            "supports `--proxy URL`", "prompts for the Cookie header",
+            "supports `--proxy URL`", "Cookie header for a session-based target",
         ):
             with self.subTest(phrase=phrase):
                 self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
@@ -89,6 +89,23 @@ class SkillContract(unittest.TestCase):
         ):
             with self.subTest(phrase=phrase):
                 self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
+
+    def test_source_fidelity_checks_all_material_proof_and_stops_for_secrets(self):
+        for phrase in (
+            "including negative controls", "not merely the excerpts you chose to quote",
+            "stop before placing secret-bearing evidence in the paste-ready report",
+            "ask for an explicit disclosure or redaction decision",
+            "scan the whole finished report for live credentials",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
+
+    def test_non_cookie_auth_is_provided_at_runtime_for_guided_poc(self):
+        for phrase in (
+            "Bearer token or API key when the target uses one",
+            "rather than embedding the reporter's credential",
+        ):
+            self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
 
     def test_readiness_checks_final_reviewer_artifact(self):
         for phrase in (
