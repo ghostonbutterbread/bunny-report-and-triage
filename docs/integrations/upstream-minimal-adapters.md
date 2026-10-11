@@ -21,8 +21,8 @@ Retain the original report/description/target intake, live end-to-end validation
 
 ## Evidence and review
 
-- Tests and commands: six static contract checks pass with `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`; `git diff --check` passes. Programmatic upstream comparison: 355 of 380 upstream SKILL.md lines unchanged, with ten changed/inserted spans corresponding to the allowed adapters.
-- Independent review: pending.
+- Tests and commands: six static contract checks pass with `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`; `git diff --check` passes. Inspect `git diff upstream/main HEAD -- SKILL.md` for the exact upstream-to-fork adapter changes; do not infer substantive changes from the prior fork's commit diff.
+- Independent review: REVISE for an ambiguous/mismatched diff-count receipt in this dossier only; skill and README passed the requested upstream-parity review. This receipt was corrected and awaits focused re-review.
 - Replay/cohort/fixture evidence: no live target or PoC execution; static contract and direct upstream diff only.
 - Merge/ancestry evidence: feature based on clean `origin/main` at `cd2a504`.
 
@@ -39,7 +39,7 @@ Retain the original report/description/target intake, live end-to-end validation
 - **Owning feature branch/ref:** `fix/upstream-minimal-adapters`
 - **Latest immutable recovery checkpoint:** `f92aa79abe0f5fc7c2fd9ea8b9cd4aa0fc203e76`
 - **Feature implementation commit(s):** `f92aa79abe0f5fc7c2fd9ea8b9cd4aa0fc203e76`
-- **Exact resume point:** independently review exact committed diff, merge/push standalone fork main, refresh existing Hoster trial checkout, verify runtime skill links.
+- **Exact resume point:** independently re-review corrected dossier, then merge/push standalone fork main, refresh existing Hoster trial checkout, verify runtime skill links.
 - **Working-tree state at handoff:** clean after dossier checkpoint commit.
 
 ## Decision gates
@@ -51,3 +51,4 @@ Retain the original report/description/target intake, live end-to-end validation
 ## Decision record
 
 - 2026-10-11 — created from Ryu's narrow-restoration instruction; initial focused static checks pass. Implementation checkpoint `f92aa79abe0f5fc7c2fd9ea8b9cd4aa0fc203e76` is ready for independent review.
+- 2026-10-11 — independent review found only the inaccurate/ambiguous line-count receipt in this dossier; removed it without changing the skill, README, or tests. Fresh narrow review pending.
