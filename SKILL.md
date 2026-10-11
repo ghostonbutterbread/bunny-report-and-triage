@@ -203,13 +203,13 @@ When the program requires CVSS 3.1, score only the demonstrated path and its pre
 
 ## PHASE 5: GENERATE SUBMISSION REPORT
 
-**Never overwrite the report supplied for this experiment.** For the selected `reports/<FID>/REPORT.md` or `reports/<FID>/SUBMISSION.md`, write exactly one new, visible experimental file beside the canonical files:
+**Never overwrite the report supplied for this experiment.** Keep the upstream output convention (`<target-domain>-<vuln-type>.md`, with dots in the domain replaced by dashes), but append the exact finding ID before `.md` and put the file in its packet rather than the current working directory:
 
-`reports/<FID>/<FID>-<target-domain>-<vuln-type>-bunny-<YYYYMMDDThhmmssZ>-<unique-suffix>.md`
+`reports/<FID>/<target-domain>-<vuln-type>-<FID>.md`
 
-The FID prefix is the **exact packet directory name**; derive the target-domain and vulnerability-class slugs from the supplied report (for example, `api-example-com-idor`), not an invented impact. Use lower-case ASCII letters/digits/hyphens for these two *filename slugs only*, stripping unsafe characters and bounding length. If the target or class cannot be established, use `unknown-target` or `unclassified` rather than guessing. Place the private verdict/comparison note at `reports/<FID>/_meta/<same-filename-stem>-TRIAGE.md`. The `-bunny-` marker and timestamp distinguish this trial from canonical `EVIDENCE.md`, `REPORT.md`, `SUBMISSION.md`, and `poc.<ext>`. **Do not create or edit any of those canonical files**, the ledger, other findings, or a prior experiment. A new file at the packet front door is intentional for discoverability; it is not a new canonical report stage.
+Derive the domain and vulnerability class exactly as upstream does from the supplied report (for example, `api-example-com-idor` for `api.example.com` and IDOR); do not invent a stronger impact or a different class to make a filename. The final `<FID>` is the **exact packet directory name**, never normalized. If the target or class cannot be established, ask for the missing value instead of inventing a filename. Place the private verdict/comparison note at `reports/<FID>/_meta/<target-domain>-<vuln-type>-<FID>-TRIAGE.md`. This output is a separate experimental artifact, not canonical `EVIDENCE.md`, `REPORT.md`, `SUBMISSION.md`, or `poc.<ext>`. **Do not create or edit any of those canonical files**, the ledger, other findings, or a prior experiment. A new file at the packet front door is intentional for discoverability; it is not a new canonical report stage.
 
-Resolve the source and packet directory, require the packet's parent to be named `reports`, and verify the output and `_meta` paths remain within that same approved packet. Reject a symlinked source, packet, `_meta`, or candidate output; create `_meta` only if absent, then create both new files exclusively (e.g. `open(..., 'x')` / `O_EXCL`, never overwrite) and fail closed on a collision or unsafe path. Record the exact source hash before and after if feasible. If the source lacks a valid FID packet path, **stop for the packet path**; do not silently write to current working directory or task scratch. No `finding_submission.py` or other BBH report writer is required.
+Resolve the source and packet directory, require the packet's parent to be named `reports`, and verify the output and `_meta` paths remain within that same approved packet. Reject a symlinked source, packet, `_meta`, or candidate output; create `_meta` only if absent, then create both new files exclusively (e.g. `open(..., 'x')` / `O_EXCL`, never overwrite). **If this exact filename already exists, stop and ask rather than overwriting or adding a timestamp/version suffix.** Record the exact source hash before and after if feasible. If the source lacks a valid FID packet path, **stop for the packet path**; do not silently write to current working directory or task scratch. No `finding_submission.py` or other BBH report writer is required.
 
 The report must be:
 - **Straight to the point** — No filler, no "I discovered", no narrative storytelling
@@ -217,7 +217,7 @@ The report must be:
 - **Max impact framing** — Lead with the worst-case proven impact
 - **Self-contained** — A triager can understand and reproduce it without access to the researcher's lab or local files; label readiness accurately outside the file
 
-**Experimental rewrite file:** the FID-prefixed `-bunny-` report contains only the proposed report text, not internal triage commentary. It is **not** the canonical submission and is not automatically ready to paste or submit. Keep advice, confidence ratings, program-policy discussion, unverified chains, and comparison notes in its matching `_meta/*-TRIAGE.md`. Do not include hypothetical impact from a different environment as though observed. When a fact limits the finding or severity, state it briefly in the relevant Summary or Impact sentence and adjust the claim. Do not hide a material limitation.
+**Experimental rewrite file:** the upstream-style `<target-domain>-<vuln-type>-<FID>.md` report contains only the proposed report text, not internal triage commentary. It is **not** the canonical submission and is not automatically ready to paste or submit. Keep advice, confidence ratings, program-policy discussion, unverified chains, and comparison notes in its matching `_meta/*-TRIAGE.md`. Do not include hypothetical impact from a different environment as though observed. When a fact limits the finding or severity, state it briefly in the relevant Summary or Impact sentence and adjust the claim. Do not hide a material limitation.
 
 ### Report Template
 
@@ -300,13 +300,13 @@ Before delivery, read only the submission file as a capable triager unfamiliar w
 
 If essential information is missing from the supplied evidence and cannot be established during authorized testing, do not invent it or pad the report with prose. Mark the report not ready and request the exact missing detail.
 
-Write the experiment to the new FID-prefixed `-bunny-` file using exclusive creation. Record the source report path and a non-secret change/readiness summary in its matching `_meta/*-TRIAGE.md`. Verify that both new files exist and that the input report and PoC were not modified. Give the user both absolute paths and a short comparison summary; never say it was submitted.
+Write the experiment to the new upstream-style filename with the FID appended, using exclusive creation. Record the source report path and a non-secret change/readiness summary in its matching `_meta/*-TRIAGE.md`. Verify that both new files exist and that the input report and PoC were not modified. Give the user both absolute paths and a short comparison summary; never say it was submitted.
 
 ---
 
 ## PHASE 6: TRIAGE DECISION
 
-After writing the experimental report, put this summary in the matching `_meta/*-TRIAGE.md` and give a compact version in chat. Never append it to the FID-prefixed report:
+After writing the experimental report, put this summary in the matching `_meta/*-TRIAGE.md` and give a compact version in chat. Never append it to the upstream-style report:
 
 ```
 TRIAGE DECISION
@@ -318,7 +318,7 @@ Severity:    [Original] → [Escalated]
 CVSS:        [only when required and evidence-supported]
 Confidence:  [HIGH / MEDIUM / LOW]
 Action:      [REVIEW CANDIDATE / STRENGTHEN / DO NOT SUBMIT]
-Report:      <absolute path to the experiment's FID-prefixed -bunny- report>
+Report:      <absolute path to the experiment's <target-domain>-<vuln-type>-<FID>.md>
 ```
 
 If RED: explain what's wrong and what would fix it.
@@ -337,7 +337,7 @@ If GREEN: say the rewrite is a candidate for review; do not imply the original w
 
 4. **Reuse approved owned fixtures.** Do not create accounts or use email during report-only rewriting. If a separate live task needs verification mail, use the authorized Composio connection only for the approved mailbox.
 
-5. **The experimental file is the deliverable.** Require an exact FID packet; create one new FID-prefixed, target/class-named `-bunny-` Markdown file at the packet front door and one matching note under `_meta/`. Never touch the source report/PoC. For a finding with missing proof, retain only supported claims and name the gaps in the separate triage note; do not call the rewrite submission-ready.
+5. **The experimental file is the deliverable.** Require an exact FID packet; create one new `<target-domain>-<vuln-type>-<FID>.md` at the packet front door and one matching note under `_meta/`. Never touch the source report/PoC or silently version an existing experiment. For a finding with missing proof, retain only supported claims and name the gaps in the separate triage note; do not call the rewrite submission-ready.
 
 6. **Max impact, honest framing.** Reason about credible escalation paths, but claim only the strongest demonstrated impact. Separate untested chains and material limits in the triage note. Do not launch new probes for severity during a report-only experiment.
 

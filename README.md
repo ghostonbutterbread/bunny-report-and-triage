@@ -8,7 +8,7 @@ It is designed to help an agent:
 - separate observed evidence from inference;
 - reject weak or non-actionable reports before submission;
 - pursue the highest defensible impact without overstating severity; and
-- produce a separate FID-prefixed experimental rewrite visible in the source `reports/<FID>/` packet, with a matching private triage note under `_meta/`.
+- preserve upstream's `<target-domain>-<vuln-type>.md` filename and append the exact FID, saving the rewrite in the source `reports/<FID>/` packet with a private triage note under `_meta/`.
 
 ## Responsible use
 
@@ -29,7 +29,7 @@ None for report-only rewriting. A separately authorized live engagement uses Hos
 Invoke the skill with the selected report path inside an exact FID packet. If the FID/path is unknown, supply it before drafting:
 
 ```text
-Use $bunny-report-and-triage in report-only mode to rewrite only <absolute path to reports/<FID>/SUBMISSION.md or REPORT.md>. Preserve the exact FID. Read only its selected evidence; do not change the source report, PoC, ledger, or any other finding, and do not test the live target. Create the new FID-prefixed -bunny- report in the same packet and show me its path and matching triage note.
+Use $bunny-report-and-triage in report-only mode to rewrite only <absolute path to reports/<FID>/SUBMISSION.md or REPORT.md>. Preserve the exact FID. Read only its selected evidence; do not change the source report, PoC, ledger, or any other finding, and do not test the live target. Use upstream's <target-domain>-<vuln-type>.md naming with -<FID> appended before .md, in the same packet. Show me the report and triage-note paths.
 ```
 
 For a separate live-validation assignment, provide the current program scope, account and fixture ownership, and an explicit unresolved proof question. Without that, the skill only evaluates existing evidence and labels unverified steps.
@@ -39,11 +39,11 @@ For a separate live-validation assignment, provide the current program scope, ac
 For an input `.../reports/<FID>/SUBMISSION.md` or `REPORT.md`, a fresh run creates only these two **new** files:
 
 ```text
-.../reports/<FID>/<FID>-<target-domain>-<vuln-type>-bunny-<UTC>-<unique-suffix>.md
-.../reports/<FID>/_meta/<FID>-<target-domain>-<vuln-type>-bunny-<UTC>-<unique-suffix>-TRIAGE.md
+.../reports/<FID>/<target-domain>-<vuln-type>-<FID>.md
+.../reports/<FID>/_meta/<target-domain>-<vuln-type>-<FID>-TRIAGE.md
 ```
 
-For example, a packet `reports/FID-42/` about an IDOR at `api.example.com` would yield `reports/FID-42/FID-42-api-example-com-idor-bunny-<UTC>-<unique-suffix>.md`. The prefix is the exact FID; only the target/class fragments are slugs. Internal triage commentary stays in `_meta/`. Neither file is a platform submission or a change to `SUBMISSION.md`.
+For example, a packet `reports/FID-42/` about an IDOR at `api.example.com` yields `reports/FID-42/api-example-com-idor-FID-42.md`. The suffix is the exact FID; this is upstream's filename with only that suffix and destination changed. If the exact filename already exists, stop and ask rather than overwriting or adding a version. Internal triage commentary stays in `_meta/`. Neither file is a platform submission or a change to `SUBMISSION.md`.
 
 ## Repository contents
 

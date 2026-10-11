@@ -24,8 +24,8 @@ class SkillContract(unittest.TestCase):
             "report-only experiment (default): skip all live actions",
             "do not access the live target",
             "never overwrite the report supplied",
-            "reports/<FID>/<FID>-<target-domain>-<vuln-type>-bunny-<YYYYMMDDThhmmssZ>-<unique-suffix>.md",
-            "_meta/<same-filename-stem>-TRIAGE.md",
+            "reports/<FID>/<target-domain>-<vuln-type>-<FID>.md",
+            "_meta/<target-domain>-<vuln-type>-<FID>-TRIAGE.md",
             "do not create or edit any of those canonical files",
             "No `finding_submission.py` or other BBH report writer is required",
         ):
@@ -49,7 +49,7 @@ class SkillContract(unittest.TestCase):
             "require a real `reports/<FID>/` parent",
             "require the packet's parent to be named `reports`",
             "Reject a symlinked source, packet, `_meta`, or candidate output",
-            "create both new files exclusively", "fail closed on a collision",
+            "create both new files exclusively", "if this exact filename already exists, stop and ask",
             "if the source lacks a valid FID packet path, **stop for the packet path**",
         ):
             self.assertIn(text.lower(), self.skill.lower(), text)
@@ -62,10 +62,12 @@ class SkillContract(unittest.TestCase):
         self.assertIn("Do not register a new Aiskillsync bridge", self.readme)
         self.assertIn("do not assume deployment", self.readme)
 
-    def test_fid_filename_is_visible_and_noncanonical(self):
-        self.assertIn("The FID prefix is the **exact packet directory name**", self.skill)
+    def test_upstream_filename_with_fid_suffix_is_visible_and_noncanonical(self):
+        self.assertIn("Keep the upstream output convention", self.skill)
+        self.assertIn("The final `<FID>` is the **exact packet directory name**", self.skill)
         self.assertIn("A new file at the packet front door is intentional for discoverability", self.skill)
-        self.assertIn("FID-42-api-example-com-idor-bunny-", self.readme)
+        self.assertIn("reports/FID-42/api-example-com-idor-FID-42.md", self.readme)
+        self.assertIn("rather than overwriting or adding a timestamp/version suffix", self.skill)
         self.assertIn("not a new canonical report stage", self.skill)
 
 
