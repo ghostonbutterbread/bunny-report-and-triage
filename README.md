@@ -1,6 +1,6 @@
-# bug-bounty-triage-experiment
+# bunny-report-and-triage
 
-This is an **isolated local fork** of Sequester-AG/bug-bounty-triage (MIT; upstream commit `9684e1bfc876e841f9c789f0b258902b43d461e4`) for a one-report, read-only comparison trial on Hoster. It is **not** a GitHub-hosted fork or an integration into BBH's canonical reporting policy. The source report, PoC, evidence, and ledger are never edited by a report-only invocation.
+This is a **GitHub fork** of Sequester-AG/bug-bounty-triage (MIT; upstream commit `9684e1bfc876e841f9c789f0b258902b43d461e4`) for a one-report, read-only comparison trial on Hoster. The fork lives at `ghostonbutterbread/bunny-report-and-triage`; it is **not** an integration into BBH's canonical reporting policy. The source report, PoC, evidence, and ledger are never edited by a report-only invocation.
 
 It is designed to help an agent:
 
@@ -8,7 +8,7 @@ It is designed to help an agent:
 - separate observed evidence from inference;
 - reject weak or non-actionable reports before submission;
 - pursue the highest defensible impact without overstating severity; and
-- produce a separate experimental rewrite and private triage note in the source report packet's `_runs/triage-experiment-<UTC>/` capsule.
+- produce a separate FID-prefixed experimental rewrite visible in the source `reports/<FID>/` packet, with a matching private triage note under `_meta/`.
 
 ## Responsible use
 
@@ -18,7 +18,7 @@ Do not copy live secrets or unrelated private data into experimental output. A s
 
 ## Trial installation on Hoster
 
-Install this local fork as a separate Git checkout on Hoster, then link the skill directory by its unique name `bug-bounty-triage-experiment` into the selected agent's skill root. These links are **manual trial projections**, not Aiskillsync-managed sources. Do not register a new Aiskillsync bridge or alter profile selection until Ryushe reviews an actual rewrite and authorizes integration. Verify the actual link target and `SKILL.md` revision before invoking; do not assume deployment just because this README exists.
+Clone this fork as a separate Git checkout on Hoster, then link the skill directory by its unique name `bunny-report-and-triage` into the selected agent's skill root. These links are **manual trial projections**, not Aiskillsync-managed sources. Do not register a new Aiskillsync bridge or alter profile selection until Ryushe reviews an actual rewrite and authorizes integration. Verify the actual link target and `SKILL.md` revision before invoking; do not assume deployment just because this README exists.
 
 ## Optional live validation dependencies
 
@@ -26,24 +26,24 @@ None for report-only rewriting. A separately authorized live engagement uses Hos
 
 ## Usage
 
-Invoke the skill with the selected report path (or pasted report and an explicit separate output directory):
+Invoke the skill with the selected report path inside an exact FID packet. If the FID/path is unknown, supply it before drafting:
 
 ```text
-Use $bug-bounty-triage-experiment in report-only mode to rewrite this one existing report: <absolute path>. Read only the selected evidence. Do not change the source report, PoC, ledger, or any other finding; do not test the live target. Show me the experimental rewrite and triage note paths.
+Use $bunny-report-and-triage in report-only mode to rewrite only <absolute path to reports/<FID>/SUBMISSION.md or REPORT.md>. Preserve the exact FID. Read only its selected evidence; do not change the source report, PoC, ledger, or any other finding, and do not test the live target. Create the new FID-prefixed -bunny- report in the same packet and show me its path and matching triage note.
 ```
 
 For a separate live-validation assignment, provide the current program scope, account and fixture ownership, and an explicit unresolved proof question. Without that, the skill only evaluates existing evidence and labels unverified steps.
 
 ## Output
 
-For an input `.../reports/<FID>/SUBMISSION.md` or `REPORT.md`, a fresh run writes only:
+For an input `.../reports/<FID>/SUBMISSION.md` or `REPORT.md`, a fresh run creates only these two **new** files:
 
 ```text
-.../reports/<FID>/_runs/triage-experiment-<UTC>/REWRITE.md
-.../reports/<FID>/_runs/triage-experiment-<UTC>/_meta/TRIAGE.md
+.../reports/<FID>/<FID>-<target-domain>-<vuln-type>-bunny-<UTC>-<unique-suffix>.md
+.../reports/<FID>/_meta/<FID>-<target-domain>-<vuln-type>-bunny-<UTC>-<unique-suffix>-TRIAGE.md
 ```
 
-Internal triage commentary stays outside `REWRITE.md`. Neither file is a platform submission or a change to canonical reporting.
+For example, a packet `reports/FID-42/` about an IDOR at `api.example.com` would yield `reports/FID-42/FID-42-api-example-com-idor-bunny-<UTC>-<unique-suffix>.md`. The prefix is the exact FID; only the target/class fragments are slugs. Internal triage commentary stays in `_meta/`. Neither file is a platform submission or a change to `SUBMISSION.md`.
 
 ## Repository contents
 

@@ -15,7 +15,7 @@ class SkillContract(unittest.TestCase):
         cls.readme = README.read_text(encoding="utf-8")
 
     def test_name_and_upstream_license(self):
-        self.assertTrue(self.skill.startswith("---\nname: bug-bounty-triage-experiment\n"))
+        self.assertTrue(self.skill.startswith("---\nname: bunny-report-and-triage\n"))
         self.assertIn("9684e1bfc876e841f9c789f0b258902b43d461e4", self.skill)
         self.assertIn("Copyright (c) 2026 Sequester-AG", (ROOT / "LICENSE").read_text())
 
@@ -24,10 +24,9 @@ class SkillContract(unittest.TestCase):
             "report-only experiment (default): skip all live actions",
             "do not access the live target",
             "never overwrite the report supplied",
-            "_runs/triage-experiment-<YYYYMMDDThhmmssZ>-<unique-suffix>/",
-            "REWRITE.md",
-            "_meta/TRIAGE.md",
-            "do not edit the canonical `EVIDENCE.md`, `REPORT.md`, `SUBMISSION.md`, PoC, ledger",
+            "reports/<FID>/<FID>-<target-domain>-<vuln-type>-bunny-<YYYYMMDDThhmmssZ>-<unique-suffix>.md",
+            "_meta/<same-filename-stem>-TRIAGE.md",
+            "do not create or edit any of those canonical files",
             "No `finding_submission.py` or other BBH report writer is required",
         ):
             self.assertIn(text.lower(), self.skill.lower(), text)
@@ -47,19 +46,27 @@ class SkillContract(unittest.TestCase):
         for text in (
             "bbh --root", "bbh --print-command", "/bin/bash -lc",
             "hoster-ssh", "never run the provisioner from bare SSH",
-            "resolve the input file and the approved packet parent",
-            "reject symlinks in the output path components",
-            "create the fresh capsule exclusively", "fail closed on collision",
-            "for non-packet input, use the separately specified directory or task-owned scratch",
+            "require a real `reports/<FID>/` parent",
+            "require the packet's parent to be named `reports`",
+            "Reject a symlinked source, packet, `_meta`, or candidate output",
+            "create both new files exclusively", "fail closed on a collision",
+            "if the source lacks a valid FID packet path, **stop for the packet path**",
         ):
             self.assertIn(text.lower(), self.skill.lower(), text)
 
     def test_standalone_not_promoted_as_canonical(self):
         self.assertIn("standalone, opt-in report experiment", self.skill)
         self.assertIn("not** the canonical submission", self.skill)
-        self.assertIn("not** a GitHub-hosted fork", self.readme)
+        self.assertIn("GitHub fork", self.readme)
+        self.assertIn("ghostonbutterbread/bunny-report-and-triage", self.readme)
         self.assertIn("Do not register a new Aiskillsync bridge", self.readme)
         self.assertIn("do not assume deployment", self.readme)
+
+    def test_fid_filename_is_visible_and_noncanonical(self):
+        self.assertIn("The FID prefix is the **exact packet directory name**", self.skill)
+        self.assertIn("A new file at the packet front door is intentional for discoverability", self.skill)
+        self.assertIn("FID-42-api-example-com-idor-bunny-", self.readme)
+        self.assertIn("not a new canonical report stage", self.skill)
 
 
 if __name__ == "__main__":

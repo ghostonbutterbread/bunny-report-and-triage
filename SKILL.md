@@ -1,13 +1,13 @@
 ---
-name: bug-bounty-triage-experiment
+name: bunny-report-and-triage
 description: "Experimentally rewrite and triage one bug bounty report without changing its original."
-argument-hint: "<existing report path or text + selected evidence; optional separate live-test assignment>"
+argument-hint: "<absolute reports/<FID>/REPORT.md or SUBMISSION.md path + selected evidence>"
 allowed-tools: [Read, Glob, Grep, Bash, Write, Edit, Agent, WebFetch, WebSearch]
 ---
 
 # Bug Bounty Report Triage, Validation & Severity Escalation (Experiment)
 
-This is a **standalone, opt-in report experiment** derived from Sequester-AG/bug-bounty-triage (MIT, upstream revision 9684e1bfc876e841f9c789f0b258902b43d461e4). It does not replace BBH's reporting workflow or require its report-writing skills. Read one supplied report and its selected evidence, produce a separately named experimental rewrite, and compare it with the original. Never edit the source report, evidence, PoC, ledger, or other findings. A report rewrite by itself is read-only: do not access the live target, create accounts, or rerun the PoC unless the operator *separately and explicitly* assigns authorized live validation. A skill invocation is not permission to test. Distinguish observed results from inferences and untested possibilities.
+This is a **standalone, opt-in report experiment** in a named GitHub fork of Sequester-AG/bug-bounty-triage (MIT, upstream revision 9684e1bfc876e841f9c789f0b258902b43d461e4). It does not replace BBH's reporting workflow or require its report-writing skills. Read one supplied FID packet report and its selected evidence, produce a separately named experimental rewrite in that same `reports/<FID>/` directory, and compare it with the original. Never edit the source report, evidence, PoC, ledger, or other findings. A report rewrite by itself is read-only: do not access the live target, create accounts, or rerun the PoC unless the operator *separately and explicitly* assigns authorized live validation. A skill invocation is not permission to test. Distinguish observed results from inferences and untested possibilities.
 
 Your goals:
 1. **Assess the supplied proof** — In report-only mode, identify which steps were previously observed versus independently reproduced; never claim that you tested them yourself. In a separate authorized live-validation assignment, independently check only the unresolved, safe, in-scope boundary.
@@ -32,6 +32,7 @@ $ARGUMENTS
 
 Extract from the provided report:
 
+- **FID and source path**: exact finding ID from the selected `reports/<FID>/REPORT.md` or `SUBMISSION.md` packet; do not guess or rename it
 - **Target**: domain, app, API
 - **Vuln class**: CWE (IDOR, XSS, SSRF, SQLi, Auth Bypass, etc.)
 - **Endpoint**: URL, route, parameter
@@ -42,7 +43,7 @@ Extract from the provided report:
 - **Target-specific prerequisites**: product version/build, feature location, required role, and how required authentication values are obtained
 - **Custom test infrastructure**: network placement, listeners/services, commands or scripts, ports, and replaceable values
 
-If information needed for a live test is missing, continue analyzing the supplied evidence and ask only for the specific missing input.
+Before writing, resolve the selected source file and its parent packet. Require a real `reports/<FID>/` parent and a source basename of `REPORT.md` or `SUBMISSION.md`. Keep the FID exactly as the directory names it and compare any FID claimed inside the report; if they conflict, stop and ask which packet is intended. If the supplied report is pasted without an exact packet path and FID, ask for those instead of inventing an output directory. If information needed for a live test is missing, continue analyzing the supplied evidence and ask only for the specific missing input.
 
 ## SOURCE FIDELITY AND PRIVACY
 
@@ -202,7 +203,13 @@ When the program requires CVSS 3.1, score only the demonstrated path and its pre
 
 ## PHASE 5: GENERATE SUBMISSION REPORT
 
-**Never overwrite the report supplied for this experiment.** For an input file inside a finding packet `reports/<FID>/REPORT.md` or `reports/<FID>/SUBMISSION.md`, create one new run capsule at `reports/<FID>/_runs/triage-experiment-<YYYYMMDDThhmmssZ>-<unique-suffix>/` and write `REWRITE.md` there. Put the internal verdict/side-by-side gap notes in the same capsule's `_meta/TRIAGE.md`; do not edit the canonical `EVIDENCE.md`, `REPORT.md`, `SUBMISSION.md`, PoC, ledger, other findings, or prior run capsules. This is inside the normal report directory but visually and operationally separate. Resolve the input file and the approved packet parent first; reject symlinks in the output path components from that parent onward, verify `_runs` resolves inside that same approved parent, and **create the fresh capsule exclusively** (for example with a single `mkdir` that fails if it exists). Fail closed on collision or any unexpected path; never reuse a prior run capsule. If the input is not in a finding packet, use a user-specified separate output directory or task-owned scratch with the same exclusive-new-capsule rule; never guess the canonical destination. Verify that the output path is distinct from the input before writing. No `finding_submission.py` or other BBH report writer is required.
+**Never overwrite the report supplied for this experiment.** For the selected `reports/<FID>/REPORT.md` or `reports/<FID>/SUBMISSION.md`, write exactly one new, visible experimental file beside the canonical files:
+
+`reports/<FID>/<FID>-<target-domain>-<vuln-type>-bunny-<YYYYMMDDThhmmssZ>-<unique-suffix>.md`
+
+The FID prefix is the **exact packet directory name**; derive the target-domain and vulnerability-class slugs from the supplied report (for example, `api-example-com-idor`), not an invented impact. Use lower-case ASCII letters/digits/hyphens for these two *filename slugs only*, stripping unsafe characters and bounding length. If the target or class cannot be established, use `unknown-target` or `unclassified` rather than guessing. Place the private verdict/comparison note at `reports/<FID>/_meta/<same-filename-stem>-TRIAGE.md`. The `-bunny-` marker and timestamp distinguish this trial from canonical `EVIDENCE.md`, `REPORT.md`, `SUBMISSION.md`, and `poc.<ext>`. **Do not create or edit any of those canonical files**, the ledger, other findings, or a prior experiment. A new file at the packet front door is intentional for discoverability; it is not a new canonical report stage.
+
+Resolve the source and packet directory, require the packet's parent to be named `reports`, and verify the output and `_meta` paths remain within that same approved packet. Reject a symlinked source, packet, `_meta`, or candidate output; create `_meta` only if absent, then create both new files exclusively (e.g. `open(..., 'x')` / `O_EXCL`, never overwrite) and fail closed on a collision or unsafe path. Record the exact source hash before and after if feasible. If the source lacks a valid FID packet path, **stop for the packet path**; do not silently write to current working directory or task scratch. No `finding_submission.py` or other BBH report writer is required.
 
 The report must be:
 - **Straight to the point** — No filler, no "I discovered", no narrative storytelling
@@ -210,7 +217,7 @@ The report must be:
 - **Max impact framing** — Lead with the worst-case proven impact
 - **Self-contained** — A triager can understand and reproduce it without access to the researcher's lab or local files; label readiness accurately outside the file
 
-**Experimental rewrite file:** `REWRITE.md` contains only the proposed report text, not internal triage commentary. It is **not** the canonical submission and is not automatically ready to paste or submit. Keep advice, confidence ratings, program-policy discussion, unverified chains, and comparison notes in `_meta/TRIAGE.md`. Do not include hypothetical impact from a different environment as though observed. When a fact limits the finding or severity, state it briefly in the relevant Summary or Impact sentence and adjust the claim. Do not hide a material limitation.
+**Experimental rewrite file:** the FID-prefixed `-bunny-` report contains only the proposed report text, not internal triage commentary. It is **not** the canonical submission and is not automatically ready to paste or submit. Keep advice, confidence ratings, program-policy discussion, unverified chains, and comparison notes in its matching `_meta/*-TRIAGE.md`. Do not include hypothetical impact from a different environment as though observed. When a fact limits the finding or severity, state it briefly in the relevant Summary or Impact sentence and adjust the claim. Do not hide a material limitation.
 
 ### Report Template
 
@@ -293,13 +300,13 @@ Before delivery, read only the submission file as a capable triager unfamiliar w
 
 If essential information is missing from the supplied evidence and cannot be established during authorized testing, do not invent it or pad the report with prose. Mark the report not ready and request the exact missing detail.
 
-Write the experiment to the new run capsule's `REWRITE.md` using the available file-writing tool. Record the source report path and a non-secret change/readiness summary in `_meta/TRIAGE.md`. Verify that both new files exist and that the input report and PoC were not modified. Give the user both absolute paths and a short comparison summary; never say it was submitted.
+Write the experiment to the new FID-prefixed `-bunny-` file using exclusive creation. Record the source report path and a non-secret change/readiness summary in its matching `_meta/*-TRIAGE.md`. Verify that both new files exist and that the input report and PoC were not modified. Give the user both absolute paths and a short comparison summary; never say it was submitted.
 
 ---
 
 ## PHASE 6: TRIAGE DECISION
 
-After writing the experimental report, put this summary in `_meta/TRIAGE.md` and give a compact version in chat. Never append it to `REWRITE.md`:
+After writing the experimental report, put this summary in the matching `_meta/*-TRIAGE.md` and give a compact version in chat. Never append it to the FID-prefixed report:
 
 ```
 TRIAGE DECISION
@@ -311,7 +318,7 @@ Severity:    [Original] → [Escalated]
 CVSS:        [only when required and evidence-supported]
 Confidence:  [HIGH / MEDIUM / LOW]
 Action:      [REVIEW CANDIDATE / STRENGTHEN / DO NOT SUBMIT]
-Report:      <absolute path to the experiment's REWRITE.md>
+Report:      <absolute path to the experiment's FID-prefixed -bunny- report>
 ```
 
 If RED: explain what's wrong and what would fix it.
@@ -330,7 +337,7 @@ If GREEN: say the rewrite is a candidate for review; do not imply the original w
 
 4. **Reuse approved owned fixtures.** Do not create accounts or use email during report-only rewriting. If a separate live task needs verification mail, use the authorized Composio connection only for the approved mailbox.
 
-5. **The experimental file is the deliverable.** For a packet input, output a new `REWRITE.md` under the approved packet's exclusively created `_runs/triage-experiment-.../`; for non-packet input, use the separately specified directory or task-owned scratch from Phase 5. Never touch the source report/PoC. For a finding with missing proof, retain only supported claims and name the gaps in the separate `_meta/TRIAGE.md`; do not call the rewrite submission-ready.
+5. **The experimental file is the deliverable.** Require an exact FID packet; create one new FID-prefixed, target/class-named `-bunny-` Markdown file at the packet front door and one matching note under `_meta/`. Never touch the source report/PoC. For a finding with missing proof, retain only supported claims and name the gaps in the separate triage note; do not call the rewrite submission-ready.
 
 6. **Max impact, honest framing.** Reason about credible escalation paths, but claim only the strongest demonstrated impact. Separate untested chains and material limits in the triage note. Do not launch new probes for severity during a report-only experiment.
 
