@@ -1,6 +1,6 @@
 # bunny-report-and-triage
 
-`bunny-report-and-triage` is an opt-in [GitHub fork](https://github.com/ghostonbutterbread/bunny-report-and-triage) of Sequester-AG/bug-bounty-triage (MIT; upstream revision `9684e1bfc876e841f9c789f0b258902b43d461e4`). It preserves upstream's triage, authorized validation, impact escalation, and single-report method. This trial does not replace BBH's standing reporting workflow.
+`bunny-report-and-triage` is a fork of Sequester-AG/bug-bounty-triage for rigorous bug bounty report triage, independent validation, impact escalation, and submission-ready reporting.
 
 It is designed to help an agent:
 
@@ -14,35 +14,52 @@ It is designed to help an agent:
 
 Use this skill only on systems you own or are explicitly authorized to test. Invoking the skill does not grant permission to test a target, exceed a program's scope, access unrelated data, or perform destructive actions.
 
-Review generated files before sharing or committing them. Keep live secrets, unrelated personal data, and restricted raw evidence out of reports. An evidence-only writing request does not authorize live target contact; a separate scoped assignment is required.
+The skill may preserve sensitive evidence in generated reports when the user supplies it. Review generated files before sharing or committing them, and follow the applicable bug bounty program's rules.
 
-## Trial installation
+## Installation
 
-Keep this fork in a separate Git checkout and project its unique skill name `bunny-report-and-triage` to the selected trial agent's skill root. Verify its actual Git revision and resolved skill link. Do not register a new Aiskillsync bridge or assume deployment from this README; wider integration needs the owner's decision after comparing a real report.
+### Skills CLI
 
-## Supporting skills
+```bash
+npx skills add ghostonbutterbread/bunny-report-and-triage --skill bunny-report-and-triage
+```
 
-Evidence-only reporting needs no browser or mailbox. Separately authorized live validation uses BBH's `chromium-test` provisioner and task-scoped MITM; account setup follows `account-testing-policy`/`email-access-policy`, and authorized mailbox retrieval uses `mail` via Composio. This fork does not install upstream's browser or email CLIs or create disposable inboxes.
+### Codex
+
+```bash
+git clone https://github.com/ghostonbutterbread/bunny-report-and-triage.git ~/.codex/skills/bunny-report-and-triage
+```
+
+### Agent skills directory
+
+```bash
+git clone https://github.com/ghostonbutterbread/bunny-report-and-triage.git ~/.agents/skills/bunny-report-and-triage
+```
+
+## Supporting skills and CLIs
+
+The full live-validation workflow uses the `chromium-test` skill for the provisioned Chromium browser and the `mail` skill for verification messages in approved owned mailboxes. Select account identities under `email-access-policy`; `mail` does not create disposable inboxes.
 
 ## Usage
 
-Invoke the skill with an exact FID packet and a vulnerability description or its evidence index; no existing report, submission draft, or standalone PoC file is required:
+Invoke the skill with a report, vulnerability description, or target and finding:
 
 ```text
-Use $bunny-report-and-triage on <absolute path to reports/<FID>/EVIDENCE.md> and its necessary raw-evidence pointers to create one upstream-style report for <FID>. This is an evidence-only trial: do not read earlier reports/PoCs, contact the target, or create accounts. Distinguish prior evidence from testing by this run. Give the report path and triage verdict in chat.
+Use $bunny-report-and-triage to validate this report and determine whether it is ready to submit: <report>. FID: <exact finding ID>
 ```
 
-For live validation, provide a separate scoped assignment with current program rules, approved account/fixture ownership, and the specific proof question. Otherwise the skill evaluates existing evidence and identifies what remains unverified.
+For live validation, provide the relevant authorization and scope. The complete workflow can use Chromium browser automation, direct HTTP requests, and owned test accounts with authorized mail access when those capabilities are available in the host environment. If live testing is unavailable, the skill should state what remains unverified.
 
 ## Output
 
-The skill writes one Markdown report named from the target and vulnerability class with the packet's exact FID suffix, such as:
+For a supported, submission-ready finding, the skill writes a Markdown report named from the target and vulnerability class, such as:
 
 ```text
-reports/FID-42/api-example-com-idor-FID-42.md
+reports/D15/example-com-idor-D15.md
 ```
 
-If the exact destination exists, stop rather than overwrite or invent a version. Internal triage commentary and the GREEN/YELLOW/RED verdict stay in chat, outside the report. A trial draft with missing proof is not submission-ready; the user reviews the output before any future pipeline adoption or submission decision.
+Internal triage commentary stays outside the submission file.
+If the agent writes a separate PoC file, it goes beside the report under `reports/<FID>/`; the report itself includes reproduction steps even when no separate PoC is needed.
 
 ## Repository contents
 
