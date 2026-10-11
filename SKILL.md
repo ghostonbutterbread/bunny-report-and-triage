@@ -46,17 +46,17 @@ If information needed for a live test is missing, continue analyzing the supplie
 
 Identify the exact finding ID (FID) for the `reports/<FID>/` output directory; ask if it is missing.
 
-## SOURCE FIDELITY — NEVER REDACT
+## SOURCE FIDELITY — PRESERVE PROOF, NOT REPORTER AUTH
 
-The supplied report and evidence are authoritative. Preserve every supplied value exactly in triage deliverables and submission reports unless the user explicitly requests a specific redaction in the current request.
+The supplied report and evidence are authoritative. Account for every supplied concrete value needed to support or limit the claim, including negative controls; do not silently omit a material proof value just because a shorter excerpt was chosen. Preserve these values exactly in the report or an attachment the triager can actually access. The narrow **reviewer-run input exception** is for a reusable command or PoC: the reviewer's Cookie header (or other required authentication) and reviewer-owned fixture IDs are runtime inputs, not substitutes for observed proof. Never put the reporter's live session Cookie or other live credential into a shareable report command or standalone PoC. Keep the original in private source evidence if needed; obtain the reviewer's authentication at runtime and discover their owned IDs where possible. This exception does not change exploit payloads, target endpoints, observed responses, negative controls, or impact claims.
 
-- Never redact, sanitize, anonymize, pseudonymize, generalize, omit, or replace supplied secrets or evidence. This includes passwords, cookies, private keys, API keys, client IDs, client secrets, bearer or session tokens, OAuth codes, names, email addresses, usernames, IP addresses, hostnames, identifiers, hashes, request values, response values, and PII.
-- Never introduce placeholders such as `<REDACTED>`, `<TOKEN>`, `<SECRET>`, `<ID>`, `[redacted]`, or synthetic examples when the source contains the concrete value. Preserve a placeholder only when it already exists in the user's source or the user explicitly requests it.
-- Treat redaction permission as limited to the exact values and report named by the user. Do not carry it into another report, artifact, or later request.
-- Preserve exact values captured during authorized live validation when they are used as report evidence. Do not weaken a runnable PoC by replacing credentials, identifiers, request bodies, or response data with non-executable placeholders.
-- If an applicable rule prevents transmitting a value, stop before writing or modifying the external report and identify the exact blocked value. Never silently substitute a placeholder or reduced example.
+- Do not redact, sanitize, anonymize, pseudonymize, generalize, omit, or replace material proof outside that reviewer-run input exception. This includes names, email addresses, usernames, IP addresses, hostnames, identifiers used as proof, hashes, request values, response values, and PII.
+- Do not introduce synthetic evidence or redaction markers such as `<REDACTED>` or `[redacted]`. A clearly identified reviewer-supplied authentication value or owned-fixture ID in a runnable command is an input, not fabricated evidence; say where the reviewer gets it, and do not ask them for an ID the PoC can derive.
+- Treat any other redaction permission as limited to the exact values and report named by the user. Do not carry it into another report, artifact, or later request.
+- Preserve exact values captured during authorized live validation when needed as report evidence, whether quoted directly or attached. Do not weaken a runnable PoC by replacing the exploit payload, observed effect, or evidence with non-executable placeholders. Accept session authentication at runtime rather than embedding the reporter's credential.
+- If a supplied request or response contains a live secret and that excerpt is needed for proof, stop before placing secret-bearing evidence in the paste-ready report; ask for an explicit disclosure or redaction decision, or obtain an authorized secret-free observation. Keep the original private and do not silently edit or publish it. If another applicable rule prevents transmitting a material proof value, likewise stop and identify the blocked value.
 
-Before delivering a report, compare it with the supplied source and validation evidence. Treat any agent-created redaction marker or missing concrete value as a blocking error and restore the original value before continuing.
+Before delivering a report, compare the complete source and validation evidence with the report and attachments, not merely the excerpts you chose to quote. Confirm every material proof value and negative control is represented faithfully, or stop and name the missing fact. Reviewer-run authentication and owned-fixture inputs above are not substitutes for observed proof values.
 
 ---
 
@@ -103,7 +103,10 @@ If the PoC fails:
 
 Save the decisive screenshots or browser state through whichever browser you used. Save relevant HTTP exchanges and response data separately when they prove the finding. Include the decisive evidence in the report or attach it so the triager can access it.
 
-If you write a standalone PoC file, save it alongside the report under `reports/<FID>/`; the report's Reproduction section remains the PoC when no separate file is needed.
+Choose the smallest reviewer-facing PoC after validating the actual effect:
+
+- Prefer inline `curl` in the report when a single request has a fixed destination and body, needs no discovered IDs or dependent setup, and requires at most only a reviewer-supplied Cookie header. The curl, observed response, and success condition together are the PoC; do not create a redundant file.
+- If reproduction needs any other reviewer-specific value (such as project or environment IDs), multiple dependent requests, or nontrivial stateful setup, write a guided standalone `poc.<ext>` alongside the report under `reports/<FID>/`. Do not wrap a long curl sequence in a script that still makes the reviewer find the IDs: discover target-specific IDs from authorized owned fixtures, send the dependent requests in order, verify the claimed effect rather than an HTTP status alone, and clean up only PoC-created state when safe. Use `triager-first-poc-authoring` and `poc-tooling-policy` when available; the behavior in this paragraph is required even when those local skills are unavailable. If an action cannot be automated safely, pause with an exact manual handoff and verify its outcome before proceeding. An authenticated CLI PoC prompts for the applicable reviewer authentication: the Cookie header for a session-based target, or a Bearer token or API key when the target uses one, rather than embedding the reporter's credential. It supports `--proxy URL` across all target requests; the report shows only required flags. Never hardcode a live session credential or expand the existing scope and authorization; authoring does not itself authorize a new live run.
 
 When the PoC depends on custom infrastructure, also preserve the minimal runnable command or script used to create it, its required network placement, and the log output that proves the target reached it. A description such as "configure a listener" is not reproducible setup.
 
@@ -142,6 +145,8 @@ A supported vulnerability is not yet submission-ready if a capable triager would
 - the shortest runnable command or script for custom listeners or services;
 - the decisive request, response, service log, and success condition; and
 - a clear indication of which addresses and values the triager must replace with their own.
+
+For a guided PoC, inspect the finished PoC's setup, requests, output, and failure paths against the recorded proof and the manual replay. Exercise offline checks and safe commands; re-run a live step only when current scope and side-effect controls permit it. Distinguish earlier observed evidence from a new PoC run: do not claim an unrun artifact was live-tested. If its required setup or claimed effect cannot be reproduced or independently justified, leave the finding YELLOW rather than presenting the package as immediately submittable.
 
 Do not add tutorials for standard tools. Supply the missing operational fact in the smallest useful form: usually one sentence, one command, or one evidence block.
 
@@ -243,7 +248,7 @@ The report must be:
 
 ### Report Template
 
-Use this structure as applicable. Keep setup, execution, and proof together so the report does not repeat the same evidence in separate Steps and PoC sections:
+Use this structure as applicable. Put the executable PoC first, followed by manual replay only when a standalone PoC exists. Keep the decisive evidence beside the step that produced it rather than duplicating it across both sections:
 
 ```
 ## [Specific Vulnerability Title Showing Max Impact]
@@ -259,21 +264,15 @@ Use this structure as applicable. Keep setup, execution, and proof together so t
 
 ### Reproduction
 
-Prerequisites: [In one compact paragraph or list, identify the affected version/build, required role, feature location, authentication source, network placement, and replaceable values. Omit facts that are obvious to a security triager.]
+Prerequisites: [Affected version/build, role, feature location, authentication source, network placement. Omit facts obvious to a security triager.]
 
-Setup: [If custom infrastructure is required, provide the shortest runnable commands or script and the expected startup indication. Omit this label when no custom setup is needed.]
+#### Proof of Concept
 
-1. [Perform one exact target-specific action. Include the request or command at the step where it is used.]
-2. [Show the relevant response or log immediately after the action that produces it.]
-3. [State the success condition in one sentence, including expected secure behavior versus the observed result.]
+[Inline curl with reviewer-supplied Cookie header when one fixed request suffices; otherwise name the attached poc.<ext>, show one invocation with minimal required flags (not IDs the PoC can discover), and explain its decisive output and any real manual handoff. If custom infrastructure is required, include its runnable setup and expected startup indication here.]
 
-` ` `http
-[Raw HTTP request or curl command]
-` ` `
+#### Manual Reproduction
 
-` ` `http
-[Response proving exploitation]
-` ` `
+[Include this heading only when a standalone poc.<ext> exists. Show the chronological owned-fixture setup, how a reviewer obtains any IDs needed for manual replay, decisive request with necessary headers/body, actual response or verified effect, and cleanup. Omit the heading entirely for inline curl: its complete request and proof belong under Proof of Concept.]
 
 ### Impact
 
@@ -291,6 +290,8 @@ Setup: [If custom infrastructure is required, provide the shortest runnable comm
 - [Alternative mitigation if applicable]
 ```
 
+For an inline curl PoC, omit the Manual Reproduction heading and put the request, observed result, and success condition together in Proof of Concept. For a standalone PoC, attach the actual `poc.<ext>` and show only its minimal required flags; do not ask for project IDs, action tokens, or other values the script can derive. Put numbered manual steps underneath as an alternative replay, not a duplicate explanation of the script's guided output. Both paths must prove the same finding and observed effect, and any reviewer-visible output must distinguish a verified effect from a request that merely returned success.
+
 ### Report Rules
 
 1. **Title**: State the strongest demonstrated impact plainly. For example, use "IDOR in invoice API exposes other tenants' invoices" when the evidence shows that access.
@@ -299,15 +300,15 @@ Setup: [If custom infrastructure is required, provide the shortest runnable comm
 4. **Assume security competence, not target familiarity**: Do not explain standard tools or concepts. Do explain the target's feature location, product-specific roles, authentication-value source, custom network placement, and any non-obvious prerequisite in the shortest useful form.
 5. **Setup must be executable**: "Configure a listener," "set up a server," or similar prose is insufficient when the PoC depends on custom infrastructure. Provide the minimal runnable command or script, or name an exact attachment and show how to run it.
 6. **Placeholders must be actionable**: For every value the triager must replace, state what it represents and where to obtain it. Do not explain obvious substitutions repeatedly.
-7. **Keep proof beside the action**: Put decisive requests, responses, and logs directly in the numbered reproduction flow. Do not repeat them in a separate PoC section or restate them in prose.
-8. **Steps must not hide work**: Use one numbered action per step when combining actions would make the reader infer missing setup or verification. Replace vague directions such as "authenticate," "capture," or "confirm" with the exact target-specific action.
+7. **Keep proof beside the action**: For inline curl, put the decisive request and observed result in Proof of Concept. For a standalone file, give its expected verified output there and put the request/response sequence in Manual Reproduction. Do not duplicate the whole sequence in both sections.
+8. **Steps must not hide work**: In Manual Reproduction, use one numbered action per step when combining actions would make the reader infer missing setup or verification. Replace vague directions such as "authenticate," "capture," or "confirm" with the exact target-specific action.
 9. **Impact section leads with the strongest supported escalated impact**, not the base finding. Mark an inference as an inference; never present an untested chain as demonstrated.
 10. **Be concise without a word limit**: Remove filler, generic transitions, tutorial text, and repeated evidence. Keep every non-obvious detail needed to reproduce and assess the finding. Prefer a command or evidence block to a paragraph.
 11. **Make evidence accessible**: Include decisive request/response excerpts and observations in the report. If an attachment is needed, identify it by the exact attached filename and explain what it proves. Do not rely on local file paths, private lab URLs, or unexplained references unavailable to the triager.
-12. **Never redact supplied evidence**: Preserve every supplied password, cookie, key, token, credential, identifier, name, email address, IP address, PII value, request value, and response value exactly. Do not replace concrete values with placeholders unless that placeholder already appears in the source or the user explicitly requested the exact redaction.
-13. **Request format**: Raw HTTP and curl are equally acceptable. Choose the format that lets the triager reproduce the request most easily; include headers, body, cookies or authentication setup, and substitutions needed for that format.
+12. **Preserve material source evidence**: Account for all concrete supplied proof values and negative controls, not just selected excerpts; reproduce them exactly in the report or a triager-accessible attachment unless the user explicitly authorizes a specific redaction. In reviewer-run commands or PoC files, request the reviewer's authentication at runtime and discover reviewer-owned fixture IDs rather than copying the reporter's credentials or unrelated fixture IDs. Do not use this exception to change an exploit payload or observed result.
+13. **Request format**: Prefer inline curl for a single fixed request with only a reviewer-supplied Cookie header as a runtime input. When IDs, tokens, dependent requests, or nontrivial setup would otherwise be manual variables, use the standalone guided PoC and put exact manual replay below it. Include the method, endpoint, necessary headers/body, authentication source, and observed effect in the relevant section.
 14. **Paste test before delivery**: Read the entire report file as if selecting all and pasting it into the submission form. Remove template brackets, drafting instructions, internal caveat blocks, status labels, analyst commentary, local file references, escaped Markdown syntax, HTML spacing entities, and any outer code fence around the report. Keep only submission content and code fences needed for commands, requests, responses, or logs.
-15. **Source-fidelity test before delivery**: Compare the completed report against the supplied report and captured evidence. Confirm that every concrete credential, secret, identifier, URL, hash, command argument, request body, response excerpt, PII value, and negative control remains verbatim and that no new redaction marker was introduced.
+15. **Source-fidelity test before delivery**: Compare the complete supplied report and captured evidence against the finished report and attachments. Confirm every material concrete proof value and negative control is present verbatim, not merely values already quoted in the draft. Also scan the whole finished report for live credentials, including authentication embedded in quoted request or response evidence. If a required excerpt carries a live secret, stop before publishing and request an explicit disclosure/redaction decision or an authorized secret-free proof; never silently omit or leak it. Remove only irrelevant incidental secrets from a draft, not material proof, and verify the result again. Only reviewer-run authentication and owned-fixture identifiers may be runtime inputs under the narrow exception above.
 
 ### Knowledge-Assumption Audit
 

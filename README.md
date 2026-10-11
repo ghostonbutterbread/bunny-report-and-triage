@@ -59,7 +59,7 @@ reports/D15/example-com-idor-D15.md
 ```
 
 Internal triage commentary stays outside the submission file.
-If the agent writes a separate PoC file, it goes beside the report under `reports/<FID>/`; the report itself includes reproduction steps even when no separate PoC is needed.
+The report's **Proof of Concept** section contains a runnable curl when one fixed request needs at most the reviewer's own Cookie header. It has no separate PoC file or Manual Reproduction heading. If the replay requires project IDs, dependent requests, or stateful setup, the agent writes a guided `poc.<ext>` beside the report under `reports/<FID>/`. The report shows the attached filename and invocation with only essential flags; a **Manual Reproduction** section below it documents chronological steps and decisive evidence. The script should discover owned-fixture IDs and verify the effect rather than merely sending requests. Reviewer authentication is supplied at runtime, not embedded in the shareable PoC or report command. This trial fork is not automatically integrated into the canonical BBH reporting pipeline.
 
 ## Repository contents
 
