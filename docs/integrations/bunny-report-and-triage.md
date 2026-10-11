@@ -1,6 +1,6 @@
 # Bunny report-and-triage fork trial
 
-- **Status:** review-ready experimental fork
+- **Status:** reviewed experimental fork, integration pending
 - **Owner:** Hermes / Ryushe
 - **Branch:** `feat/bunny-fid-naming`
 - **Base commit:** `9684e1bfc876e841f9c789f0b258902b43d461e4` (upstream main and fork `origin/main` at feature creation)
@@ -22,7 +22,7 @@ Publish an actual named GitHub fork for an opt-in Hoster report rewrite trial. K
 ## Evidence and review
 
 - Tests: `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v` from the feature worktree: **6 passed** at corrected implementation commit `38cd164a0e0d9ceb25b7e2873538805c43a6a80b`; `git diff --cached --check` passed before commit.
-- Independent review: first review of superseded `4c29121` returned REVISE for partial two-file failure and symlinked `reports` parent; addressed by `38cd164a`. Fresh review of the corrected exact tree is pending. The earlier standalone implementation `5bb4550` had a PASS review and synthetic Codex smoke on Hoster; neither substitutes for the FID-suffix write smoke.
+- Independent review: first review of superseded `4c29121` returned REVISE for partial two-file failure and symlinked `reports` parent; addressed by `38cd164a`. Fresh read-only review of implementation `38cd164a` at dossier tip `9d3cdd2` returned **PASS**, confirming the upstream basename plus exact FID suffix, paired-write safety, no canonical edits, and isolated 6/6 static tests. The earlier standalone implementation `5bb4550` had a synthetic Codex smoke on Hoster; it does not substitute for a fresh FID-suffix write smoke.
 - GitHub fork creation: GitHub API returned 202 for `ghostonbutterbread/bunny-report-and-triage`; readback returned 200, `fork=true`, parent `Sequester-AG/bug-bounty-triage`, public, main at `9684e1b` before any adaptation push.
 - Real report/target: none read, rewritten, or contacted in this task.
 
@@ -51,3 +51,4 @@ Publish an actual named GitHub fork for an opt-in Hoster report rewrite trial. K
 ## Decision record
 
 - 2026-10-11 — fork created under requested name. Initial FID-prefixed/bunny-timestamp artifact was superseded by Ryushe's correction: preserve the upstream `<target-domain>-<vuln-type>` basename and append the exact FID before `.md` in `reports/<FID>/`.
+- 2026-10-11 — independent exact-tree re-review PASS on `38cd164a`; integrate only after staging exclusion of this branch-only dossier and rerunning tests, then activate on Hoster with a synthetic packet smoke.
