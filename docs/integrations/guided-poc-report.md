@@ -26,7 +26,7 @@ Keep Bunny's upstream six-phase triage and validation pipeline, but change the f
 
 - Test-first RED: new format and reviewer-secret/fidelity contract assertions failed against the prior skill as expected.
 - GREEN: `python3 -m unittest discover -s tests -q` passed 12 tests; `git diff --check` passed, in the isolated feature worktree.
-- Independent review: initial verdict REVISE at `8d5e65e` for selective-quote fidelity, secret-bearing evidence handoff, and non-Cookie runtime authentication. These three points were corrected; fresh re-review pending.
+- Independent review: initial verdict REVISE at `8d5e65e` for selective-quote fidelity, secret-bearing evidence handoff, and non-Cookie runtime authentication. These three points were corrected at `e9e5f35193a3afa9b17fde28d14de1a000892d10`; fresh independent re-review of `710a2b3` returned PASS with no file:line blocker.
 - Live target testing: not run; a future approved finding-specific trial must exercise the full workflow separately.
 
 ## Blockers and deferred work
@@ -53,4 +53,4 @@ Keep Bunny's upstream six-phase triage and validation pipeline, but change the f
 
 ## Decision record
 
-- 2026-10-11 — Feature prepared test-first; initial independent reviewer returned REVISE on source-fidelity scope, secret-bearing evidence, and non-Cookie authentication. Focused correction committed at `e9e5f35193a3afa9b17fde28d14de1a000892d10`; fresh re-review pending.
+- 2026-10-11 — Feature prepared test-first; initial independent reviewer returned REVISE on source-fidelity scope, secret-bearing evidence, and non-Cookie authentication. Focused correction committed at `e9e5f35193a3afa9b17fde28d14de1a000892d10`. Fresh re-review of tip `710a2b3182c985280382108e8471de18d34e3772` returned PASS; accepted for standalone main integration, excluding this temporary dossier. Real finding trial remains deferred.
