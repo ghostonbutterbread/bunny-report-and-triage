@@ -39,7 +39,7 @@ class SkillContract(unittest.TestCase):
         for phrase in (
             "### Summary", "### Reproduction", "### Impact", "### Remediation",
             "Paste test before delivery", "Source-fidelity test before delivery",
-            "Never redact supplied evidence", "CVSS:        X.X",
+            "Preserve quoted evidence", "CVSS:        X.X",
             "Bounty Est:  [$range]", "If GREEN: tell them to submit.",
         ):
             with self.subTest(phrase=phrase):
@@ -57,10 +57,45 @@ class SkillContract(unittest.TestCase):
         path = "reports/<FID>/<target-domain>-<vuln-type>-<FID>.md"
         self.assertIn(path, self.skill)
         self.assertIn("reports/<FID>/", self.skill)
-        self.assertIn("If you write a standalone PoC file", self.skill)
-        self.assertIn("alongside the report", self.skill)
+        self.assertIn("Choose the smallest reviewer-facing PoC", self.skill)
+        self.assertIn("alongside the report under `reports/<FID>/`", self.skill)
         self.assertNotIn("_meta/", self.skill)
         self.assertNotIn("REPORT.md", self.skill)
+
+    def test_simple_replay_prefers_inline_curl_without_duplicate_manual_section(self):
+        for phrase in (
+            "#### Proof of Concept", "only a reviewer-supplied Cookie header",
+            "omit the Manual Reproduction heading", "no discovered IDs or dependent setup",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
+
+    def test_dependent_setup_requires_standalone_guided_poc_and_manual_replay(self):
+        for phrase in (
+            "triager-first-poc-authoring", "poc.<ext>",
+            "discover target-specific IDs", "send the dependent requests",
+            "verify the claimed effect", "#### Manual Reproduction",
+            "minimal required flags", "same finding and observed effect",
+            "supports `--proxy URL`", "prompts for the Cookie header",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
+        self.assertIn("reports/<FID>/", self.skill)
+
+    def test_reviewer_runtime_inputs_do_not_embed_reporter_session(self):
+        for phrase in (
+            "reviewer-run input exception", "reviewer's Cookie header",
+            "reporter's live session Cookie", "reviewer-owned fixture IDs",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
+
+    def test_readiness_checks_final_reviewer_artifact(self):
+        for phrase in (
+            "inspect the finished PoC's setup, requests, output, and failure paths",
+            "do not claim an unrun artifact was live-tested",
+        ):
+            self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
 
     def test_readme_matches_fork_interfaces(self):
         self.assertIn("$bunny-report-and-triage", self.readme)
