@@ -1,19 +1,19 @@
 ---
-name: bug-bounty-triage
-description: "Bug bounty report triage, validation, and severity escalation. Use when the user provides a bug bounty report to validate, wants to check if a finding is submittable, needs to escalate severity for maximum payout, or says 'triage this', 'validate this report', 'escalate this', 'is this submittable', 'check this bounty report', 'max bounty', or 'will this get accepted'."
-argument-hint: "<bug bounty report, vulnerability description, or target URL + finding>"
+name: bunny-report-and-triage
+description: "Experimentally rewrite and triage one bug bounty report without changing its original."
+argument-hint: "<absolute reports/<FID>/REPORT.md or SUBMISSION.md path + selected evidence>"
 allowed-tools: [Read, Glob, Grep, Bash, Write, Edit, Agent, WebFetch, WebSearch]
 ---
 
-# Bug Bounty Report Triage, Validation & Severity Escalation
+# Bug Bounty Report Triage, Validation & Severity Escalation (Experiment)
 
-Act as a rigorous bug bounty triager. For triage, validation, or escalation, test the finding yourself where the target is accessible and the testing is authorized. A skill invocation does not grant blanket permission to test a target. Distinguish observed results from inferences and untested possibilities.
+This is a **standalone, opt-in report experiment** in a named GitHub fork of Sequester-AG/bug-bounty-triage (MIT, upstream revision 9684e1bfc876e841f9c789f0b258902b43d461e4). It does not replace BBH's reporting workflow or require its report-writing skills. Read one supplied FID packet report and its selected evidence, produce a separately named experimental rewrite in that same `reports/<FID>/` directory, and compare it with the original. Never edit the source report, evidence, PoC, ledger, or other findings. A report rewrite by itself is read-only: do not access the live target, create accounts, or rerun the PoC unless the operator *separately and explicitly* assigns authorized live validation. A skill invocation is not permission to test. Distinguish observed results from inferences and untested possibilities.
 
 Your goals:
-1. **Test it yourself** — Independently reproduce the complete exploit and its effect end to end where applicable.
+1. **Assess the supplied proof** — In report-only mode, identify which steps were previously observed versus independently reproduced; never claim that you tested them yourself. In a separate authorized live-validation assignment, independently check only the unresolved, safe, in-scope boundary.
 2. **Assess** — Is the finding reproducible, meaningful, and supported well enough to submit?
 3. **Escalate** — Pursue the highest real, defensible impact and severity.
-4. **Ship** — Output a clean, copy-paste-ready report file. No fluff.
+4. **Ship** — Output a clean **experimental** rewrite without changing the canonical packet. Mark readiness separately; only a fully evidenced rewrite may be considered a submission candidate.
 
 ## REPORT AUDIENCE AND INFORMATION DENSITY
 
@@ -32,6 +32,7 @@ $ARGUMENTS
 
 Extract from the provided report:
 
+- **FID and source path**: exact finding ID from the selected `reports/<FID>/REPORT.md` or `SUBMISSION.md` packet; do not guess or rename it
 - **Target**: domain, app, API
 - **Vuln class**: CWE (IDOR, XSS, SSRF, SQLi, Auth Bypass, etc.)
 - **Endpoint**: URL, route, parameter
@@ -42,54 +43,29 @@ Extract from the provided report:
 - **Target-specific prerequisites**: product version/build, feature location, required role, and how required authentication values are obtained
 - **Custom test infrastructure**: network placement, listeners/services, commands or scripts, ports, and replaceable values
 
-If information needed for a live test is missing, continue analyzing the supplied evidence and ask only for the specific missing input.
+Before writing, resolve the selected source file and its parent packet. Require a real `reports/<FID>/` parent and a source basename of `REPORT.md` or `SUBMISSION.md`. Keep the FID exactly as the directory names it and compare any FID claimed inside the report; if they conflict, stop and ask which packet is intended. If the supplied report is pasted without an exact packet path and FID, ask for those instead of inventing an output directory. If information needed for a live test is missing, continue analyzing the supplied evidence and ask only for the specific missing input.
 
-## SOURCE FIDELITY — NEVER REDACT
+## SOURCE FIDELITY AND PRIVACY
 
-The supplied report and evidence are authoritative. Preserve every supplied value exactly in triage deliverables and submission reports unless the user explicitly requests a specific redaction in the current request.
+Preserve the exact technical facts required to understand the boundary: safe endpoint names, owned fixture identifiers, request shape, effect, and negative controls. **Do not copy credentials, cookies, keys, session/CSRF/OAuth tokens, verification codes, reset links, private request bodies, or unrelated personal data** into the experiment or chat, even when present in the input. Use reviewer-supplied placeholders and explain how the reviewer obtains each value from *their own* account. Keep restricted raw evidence in its existing approved location; do not duplicate it in this experiment. Never invent a result or alter a technical identifier to make it look sanitized. If a decisive claim cannot be substantiated without exposing protected content, mark it unverified and name the blocked proof condition rather than writing a false runnable example.
 
-- Never redact, sanitize, anonymize, pseudonymize, generalize, omit, or replace supplied secrets or evidence. This includes passwords, cookies, private keys, API keys, client IDs, client secrets, bearer or session tokens, OAuth codes, names, email addresses, usernames, IP addresses, hostnames, identifiers, hashes, request values, response values, and PII.
-- Never introduce placeholders such as `<REDACTED>`, `<TOKEN>`, `<SECRET>`, `<ID>`, `[redacted]`, or synthetic examples when the source contains the concrete value. Preserve a placeholder only when it already exists in the user's source or the user explicitly requests it.
-- Treat redaction permission as limited to the exact values and report named by the user. Do not carry it into another report, artifact, or later request.
-- Preserve exact values captured during authorized live validation when they are used as report evidence. Do not weaken a runnable PoC by replacing credentials, identifiers, request bodies, or response data with non-executable placeholders.
-- If an applicable rule prevents transmitting a value, stop before writing or modifying the external report and identify the exact blocked value. Never silently substitute a placeholder or reduced example.
-
-Before delivering a report, compare it with the supplied source and validation evidence. Treat any agent-created redaction marker or missing concrete value as a blocking error and restore the original value before continuing.
+Before delivery, compare the rewrite against the supplied evidence for accurate safe values and supported claims, and check that no secret or unrelated private data migrated into the new file.
 
 ---
 
 ## PHASE 2: LIVE END-TO-END TESTING (WHEN APPLICABLE AND AUTHORIZED)
 
-For triage, validation, escalation, or submission-readiness requests, treat the supplied report as a lead, not proof. When the target is accessible and testing is authorized, independently reproduce the finding end to end: establish the starting state, execute the exploit, and verify the resulting data access or state change. Do not stop at reading the report, replaying one request without checking its effect, or accepting its screenshots and claims at face value. If end-to-end testing is not applicable or cannot be completed, explain why, assess the evidence available, and identify exactly what remains unverified. Do not claim a test occurred when it did not.
+**Report-only experiment (default): skip all live actions in this phase.** Treat the supplied report as a lead, distinguish prior recorded observations from new testing, and state precisely which claim links you cannot verify. Only a separate, explicit, authorized live-testing assignment may proceed below. First confirm current program scope/rules, account ownership, rate, and side effects; stop rather than inventing authorization. If end-to-end testing cannot be completed safely, explain why. Do not claim a test occurred when it did not.
 
 ### 2a. Set Up Test Infrastructure
 
-Create disposable test accounts using **agent-email**:
+Prefer already approved owned test accounts and fixtures; do not create new ones merely because this report skill was invoked. If a separate live test requires a missing owned role or object, use the program's permitted setup flow and record non-secret account metadata. For approved forwarded verification mail, use the existing authorized **Composio** email connection and its discovered read/search schema; never use `agent-email`, assume an inbox exists, create an arbitrary alias, or expose OTPs in a report. If that connection/identity is unavailable, pause for a secure operator handoff. Do not treat Composio as a disposable inbox creator.
 
-```bash
-agent-email create
-```
-
-Register accounts on the target using either **agent-browser** or the **in-app browser**. Open the signup page, fill the form, and capture the resulting account state with the browser you chose. Neither browser is required over the other.
-
-Poll for verification emails and complete registration:
-
-```bash
-agent-email read default --wait 30 --interval 2
-agent-email show default <messageId>
-```
-
-Open the verification link in the chosen browser and complete account setup.
-
-Create the accounts you need:
-- **IDOR/BOLA**: attacker account + victim account
-- **Privilege escalation**: low-priv + high-priv accounts
-- **Access control**: accounts with different roles
-- **Auth bugs**: at least one valid account
+For IDOR/BOLA, role, or auth checks, use only the minimum approved owned attacker/second-role fixtures actually needed by the falsifiable test, not automatically generated pairs.
 
 ### 2b. Reproduce the Vulnerability
 
-Independently execute the reported PoC against the live target using **agent-browser** or the **in-app browser**, whichever is available and effective for the target. Adapt the steps where necessary to establish whether the underlying flaw actually exists.
+For an explicitly authorized live task, use BBH's isolated **Chromium Test provisioner**, not `agent-browser` or an interchangeable in-app browser. In Hoster's selected lane, preflight `bbh --root` and `bbh --print-command skills/chromium-test/scripts/browser_provisioner.py`, then request `bbh skills/chromium-test/scripts/browser_provisioner.py request <program> <approved-account> --agent-id <agent-id> --run-id <run-id> --purpose 'bounded report validation' --url <in-scope-url>` inside `/bin/bash -lc` in a **task-owned user-systemd service**. From Ghost, dispatch through the existing `hoster-ssh` user-unit helper; never run the provisioner from bare SSH, where `bbh` may not resolve and the workload belongs to `ssh.service`. On Hoster, use the same task-owned user-service boundary. Use the provisioner's recorded CDP control and task-scoped MITM with a trusted CA. Never invoke `chromium_test.py` directly, borrow another profile, or fall back to shared Caido. Release the browser and finish the task proxy after any bounded replay. If provisioner admission or auth fails, record the blocker rather than launching raw Chrome. Establish the starting state, execute only the safe approved step, and independently verify its effect.
 
 - Start with controlled accounts or records and the required attacker/victim roles when applicable
 - Execute the complete path from trigger through observable impact, not just the triggering request
@@ -98,19 +74,13 @@ Independently execute the reported PoC against the live target using **agent-bro
 - Capture screenshots or browser state at the decisive steps using the chosen browser
 - Record the HTTP requests/responses that prove exploitation when the PoC depends on them
 
-```bash
-# For API-level testing, use curl/httpie directly
-curl -s -X POST <endpoint> -H "Authorization: Bearer <token>" -d '<payload>' | head -100
-```
+For an API-level check, use a browser-captured request followed by bounded replay through that same task MITM where authorized; do not put live authentication in commands, logs, or reports.
 
-If the PoC fails:
-- Adapt it — try variations, different parameters, encoding changes
-- Check if it was patched — test adjacent endpoints for the same bug class
-- If truly dead, stop and tell the user it's not reproducible
+If the PoC fails, distinguish changed prerequisites, a patched boundary, a transport/auth blocker, and a negative result. A different payload or adjacent endpoint is a **new** scoped test decision, not an automatic retry. Do not label a finding dead until its stated setup and control are understood.
 
 ### 2c. Capture Evidence
 
-Save the decisive screenshots or browser state through whichever browser you used. Save relevant HTTP exchanges and response data separately when they prove the finding. Include the decisive evidence in the report or attach it so the triager can access it.
+For explicitly authorized new testing, preserve only sanitized decisive observations in the task-owned evidence lane and cite them in the experiment. For report-only work, reference existing evidence and label it prior evidence; do not recapture it. Include only shareable excerpts and exact attachment filenames that a triager could access.
 
 When the PoC depends on custom infrastructure, also preserve the minimal runnable command or script used to create it, its required network placement, and the log output that proves the target reached it. A description such as "configure a listener" is not reproducible setup.
 
@@ -118,19 +88,19 @@ When the PoC depends on custom infrastructure, also preserve the minimal runnabl
 
 ## PHASE 3: SUBMISSION READINESS
 
-**If the report fails this gate, STOP. Tell the user not to submit.**
+**If the report fails this gate, do not label the experimental rewrite submission-ready.** Keep a clearly marked experimental draft if the user wants to compare style, but do not turn missing proof into certainty.
 
-### Auto-Reject — ANY of these = DO NOT SUBMIT:
+### Common weak-signal examples — assess against the actual program rules and demonstrated effect, not a universal auto-reject policy:
 
 - Informational only (missing headers, version disclosure, verbose errors with no data leak)
 - Best practice violation without exploit (missing rate limit, missing CSP with no XSS)
 - Self-XSS with no delivery vector
-- Clearly outside scope under constraints the user has supplied
+- Clearly outside current program scope
 - Requires victim to do unrealistic things (install malware, paste into console)
 - Scanner output with no manual validation
 - Theoretical — no working PoC, "could potentially" language
-- Already patched / public CVE
-- DoS via resource exhaustion (unless catastrophic)
+- Already patched behavior without a distinct live security impact (a public CVE alone does not determine eligibility)
+- DoS via resource exhaustion where prohibited or unsupported; do not perform load testing to establish severity
 - Missing SPF/DKIM/DMARC
 - Clickjacking on non-state-changing pages
 - CSRF on logout or non-sensitive actions
@@ -154,51 +124,46 @@ Do not add tutorials for standard tools. Supply the missing operational fact in 
 
 ### Verdict
 
-- **GREEN**: Independent end-to-end testing confirms the vulnerability and impact, with a solid PoC. Proceed.
+- **GREEN**: The supplied provenance and any independently verified effect support the vulnerability and impact, with a reproducible PoC and program-compliant scope. In report-only mode, explicitly label testing by this run as **NO** even when past proof is sufficient.
 - **YELLOW**: Testing is partial, impact is borderline, or an important link remains unverified. Continue testing or strengthen the evidence.
 - **RED**: Current evidence does not support submission. Tell the user why and what would need to change.
 
-Do not require a program-policy lookup or treat an inaccessible private program policy as a blocker. Apply relevant scope or reporting constraints only when the user has supplied them or they are otherwise already known.
+Read available current program rules before claiming live-test authority or program acceptance. If private rules are inaccessible, analyze existing evidence but label that policy uncertainty; do not assume absent rules grant permission.
 
 ---
 
 ## PHASE 4: ESCALATION (MAXIMIZE BOUNTY)
 
-For every confirmed finding, systematically pursue the maximum defensible impact. Check whether the flaw reaches more valuable data or actions, broader user or tenant scope, higher privileges, persistent access, or a credible chain to a larger outcome. Prioritize the strongest plausible paths, test them within the available authorization, and stop when further escalation is unsupported or would require access beyond that authorization. Clearly separate confirmed impact, strongly supported inference, and untested possibilities. Never increase severity by assertion alone.
+For every confirmed finding, **reason about** material adjacent boundaries: broader controlled role or tenant reach, persistent access, or a credible chain. In report-only mode this is a read-only hypothesis audit, not a test plan to execute. Any separate live escalation needs its own current scope, side-effect, ownership, and class-policy decision; never move to internal infrastructure, third-party data, destructive writes, or account takeover merely to maximize payout. Clearly separate confirmed impact, supported inference, and untested possibilities.
 
 ### 4a. Escalation Paths by Vuln Class
 
-Test these systematically using **agent-browser** or the **in-app browser**, plus direct HTTP requests where useful:
+Use these as *questions*, not automatic tests. If a separately authorized proof requires a browser, use the Chromium Test provisioner described in Phase 2; only use owned fixtures and the narrowest safe observation.
 
 **IDOR / BOLA**
-- Read-only → Read+Write (try PUT/PATCH/DELETE with other users' IDs)
+- Read-only → authorized write on a second **owned** fixture, only if the mutation is safe
 - Single record → Broader access (use a bounded set of controlled records to assess whether the pattern generalizes)
-- User data → Admin data (try admin-level resource IDs)
+- User data → privileged role boundary, only with an approved owned higher-role fixture
 - Same-tenant → Cross-tenant (try org/tenant ID swaps)
-- Check if PII/financial data exposed (regulatory impact: GDPR, HIPAA, PCI)
+- Check whether the proven fields imply sensitive-data exposure; do not browse third-party records or assert regulatory impact from field names alone
 
 **XSS**
 - Reflected → Stored (inject into fields that persist)
 - Alert box → Access to session data or privileged actions (demonstrate with a controlled test account)
 - Session access → Full ATO (prove with controlled accounts when possible)
-- User context → Admin context (trigger XSS as admin user)
+- User context → privileged owned context only when an approved account and safe trigger exist
 - XSS → CSRF bypass (use XSS to perform privileged actions)
 
 **SSRF**
-- External → Internal (hit 127.0.0.1, 169.254.169.254, internal hostnames)
-- HTTP only → File read (`file:///etc/passwd`)
-- Cloud metadata → Credential exposure (confirm only to the extent authorized)
-- Internal service → RCE (chain with unauthenticated internal services)
+- External → potentially different trust boundary; internal hosts/metadata/file schemes are **not** default probes and require separate authorization and safe specialist controls
+- Internal service → more severe action is an untested chain until safely proven; do not attempt credential exposure or RCE as an automatic follow-up
 
 **SQL Injection**
 - Single column → Broader database access (use bounded queries and controlled records)
-- Read → Write (`INSERT`, `UPDATE` via stacked queries)
-- Data extraction → File read/write (`LOAD_FILE`, `INTO OUTFILE`)
-- Data extraction → RCE (`xp_cmdshell`, UDFs)
+- Read → potential write, file, or command capability only as hypothesis; do not modify a live database or export private records to chase severity
 
 **Auth Bypass**
-- Single account → Any account
-- User accounts → Admin accounts
+- One owned account → another owned role only if both are approved
 - Auth bypass → Persistent access (demonstrate with a controlled test account)
 - Auth bypass → MFA bypass
 
@@ -206,7 +171,7 @@ Test these systematically using **agent-browser** or the **in-app browser**, plu
 - User → Admin
 - Read-only → Read-write
 - Single function → Full admin panel
-- Can you modify security settings (disable MFA, change passwords)?
+- Could security settings be affected on an explicitly destructible owned account? Do not change reusable accounts for triage polish.
 - Cross-tenant access?
 
 **Open Redirect**
@@ -215,13 +180,13 @@ Test these systematically using **agent-browser** or the **in-app browser**, plu
 - Test `javascript:` and `data:` URI schemes
 
 **File Upload**
-- Image → Web shell (test extension bypass, content-type manipulation)
+- Image → possible executable content only if a safe isolated proof is authorized; no live web shell by default
 - Upload → Path traversal (directory traversal in filename)
 - SVG upload → Stored XSS
 
 ### 4b. Chaining
 
-Combine findings for compound impact — test each chain live:
+Consider chains as **hypotheses**; do not test each chain live just because it is listed:
 
 1. Info disclosure + IDOR → Proven full exploitation with real IDs
 2. Open redirect + OAuth → Token theft → ATO
@@ -232,21 +197,27 @@ Combine findings for compound impact — test each chain live:
 
 ### 4c. CVSS Rescoring
 
-After testing escalation paths, calculate the highest CVSS 3.1 score supported by the actual exploit chain and prerequisites. Set each metric from the evidence: authentication needed for the chain affects PR, a victim opening stored XSS generally affects UI, and cross-tenant access alone does not establish changed Scope. Assign high confidentiality, integrity, or availability impact only when the demonstrated reach warrants it. Explain any severity claim that depends on a strongly supported inference.
+When the program requires CVSS 3.1, score only the demonstrated path and its prerequisites. Authentication affects PR, victim interaction generally affects UI, and cross-tenant access alone does not establish changed Scope. Assign high confidentiality, integrity, or availability impact only when demonstrated. Otherwise follow the program rubric and omit an invented vector or payout estimate.
 
 ---
 
 ## PHASE 5: GENERATE SUBMISSION REPORT
 
-**Write a file called `<target-domain>-<vuln-type>.md` in the current working directory.** For example: `example-com-idor.md`, `api-target-io-ssrf.md`, `app-victim-com-stored-xss.md`. Derive the name from the target domain (dots replaced with dashes) and the vulnerability class. This is the final deliverable — a clean, copy-paste-ready report for the bug bounty platform.
+**Never overwrite the report supplied for this experiment.** Keep the upstream output convention (`<target-domain>-<vuln-type>.md`, with dots in the domain replaced by dashes), but append the exact finding ID before `.md` and put the file in its packet rather than the current working directory:
+
+`reports/<FID>/<target-domain>-<vuln-type>-<FID>.md`
+
+Derive the domain and vulnerability class exactly as upstream does from the supplied report (for example, `api-example-com-idor` for `api.example.com` and IDOR); do not invent a stronger impact or a different class to make a filename. The final `<FID>` is the **exact packet directory name**, never normalized. If the target or class cannot be established, ask for the missing value instead of inventing a filename. Place the private verdict/comparison note at `reports/<FID>/_meta/<target-domain>-<vuln-type>-<FID>-TRIAGE.md`. This output is a separate experimental artifact, not canonical `EVIDENCE.md`, `REPORT.md`, `SUBMISSION.md`, or `poc.<ext>`. **Do not create or edit any of those canonical files**, the ledger, other findings, or a prior experiment. A new file at the packet front door is intentional for discoverability; it is not a new canonical report stage.
+
+Resolve the source and packet directory and require its `reports` parent to be a real, approved directory, not a symlink; verify the output and `_meta` paths resolve inside that same packet. Reject a symlinked source, packet, `_meta`, or candidate output. Preflight **both** intended filenames for absence before writing and create `_meta` only if absent. Create the private triage note first, then the visible report, using exclusive creation for each (e.g. `open(..., 'x')` / `O_EXCL`, never overwrite). If the second creation or a subsequent verification fails, remove only this run's newly created file(s) after checking their exact path and file identity; if safe cleanup cannot be proven, report the partial artifact and stop rather than deleting anything else. **If either exact filename already exists, stop and ask rather than overwriting or adding a timestamp/version suffix.** Record the exact source hash before and after if feasible. If the source lacks a valid FID packet path, **stop for the packet path**; do not silently write to current working directory or task scratch. No `finding_submission.py` or other BBH report writer is required.
 
 The report must be:
 - **Straight to the point** — No filler, no "I discovered", no narrative storytelling
 - **Evidence-heavy** — Every claim backed by request/response or screenshot
 - **Max impact framing** — Lead with the worst-case proven impact
-- **Self-contained and platform-ready** — A triager can understand and reproduce it without access to the researcher's lab or local files
+- **Self-contained** — A triager can understand and reproduce it without access to the researcher's lab or local files; label readiness accurately outside the file
 
-**Submission-only file:** The report file must contain only text the user can paste directly into the bug bounty submission. Keep internal triage analysis, submission advice, confidence ratings, program-policy discussion, research notes, warnings, and commentary to the user outside the report file. Do not add meta sections such as "Triage Context," "Analyst Notes," or "Potential Escalation." Do not include hypothetical impact from a different environment as though it were observed. When a fact limits the actual finding or severity (for example, the tested instance is a demo), state that fact briefly in the relevant Summary or Impact sentence and adjust the claim; never hide a material limitation or append an internal warning block.
+**Experimental rewrite file:** the upstream-style `<target-domain>-<vuln-type>-<FID>.md` report contains only the proposed report text, not internal triage commentary. It is **not** the canonical submission and is not automatically ready to paste or submit. Keep advice, confidence ratings, program-policy discussion, unverified chains, and comparison notes in its matching `_meta/*-TRIAGE.md`. Do not include hypothetical impact from a different environment as though observed. When a fact limits the finding or severity, state it briefly in the relevant Summary or Impact sentence and adjust the claim. Do not hide a material limitation.
 
 ### Report Template
 
@@ -255,8 +226,8 @@ Use this structure as applicable. Keep setup, execution, and proof together so t
 ```
 ## [Specific Vulnerability Title Showing Max Impact]
 
-**Severity**: [Critical|High|Medium|Low] (CVSS 3.1: X.X)
-**CVSS Vector**: `CVSS:3.1/AV:X/AC:X/PR:X/UI:X/S:X/C:X/I:X/A:X`
+**Severity**: [program-supported tier, when scored]
+**CVSS Vector**: [only when required and evidence supports every metric]
 **CWE**: CWE-XXX — [Name]
 **Asset**: `[affected URL/endpoint]`
 
@@ -311,10 +282,10 @@ Setup: [If custom infrastructure is required, provide the shortest runnable comm
 9. **Impact section leads with the strongest supported escalated impact**, not the base finding. Mark an inference as an inference; never present an untested chain as demonstrated.
 10. **Be concise without a word limit**: Remove filler, generic transitions, tutorial text, and repeated evidence. Keep every non-obvious detail needed to reproduce and assess the finding. Prefer a command or evidence block to a paragraph.
 11. **Make evidence accessible**: Include decisive request/response excerpts and observations in the report. If an attachment is needed, identify it by the exact attached filename and explain what it proves. Do not rely on local file paths, private lab URLs, or unexplained references unavailable to the triager.
-12. **Never redact supplied evidence**: Preserve every supplied password, cookie, key, token, credential, identifier, name, email address, IP address, PII value, request value, and response value exactly. Do not replace concrete values with placeholders unless that placeholder already appears in the source or the user explicitly requested the exact redaction.
-13. **Request format**: Raw HTTP and curl are equally acceptable. Choose the format that lets the triager reproduce the request most easily; include headers, body, cookies or authentication setup, and substitutions needed for that format.
+12. **Protect private evidence**: Preserve safe technical values accurately, but replace credentials, live authentication, unrelated private data, and sensitive response content with reviewer-owned placeholders whose source is explained. Do not imply a placeholder was the captured value. Keep restricted originals in their existing approved evidence store only.
+13. **Request format**: Raw HTTP and curl are equally acceptable. Choose the format that lets the triager reproduce the request most easily; explain how to obtain authentication from their own account, show safe headers/body, and state substitutions. Never paste a live cookie or token.
 14. **Paste test before delivery**: Read the entire report file as if selecting all and pasting it into the submission form. Remove template brackets, drafting instructions, internal caveat blocks, status labels, analyst commentary, local file references, escaped Markdown syntax, HTML spacing entities, and any outer code fence around the report. Keep only submission content and code fences needed for commands, requests, responses, or logs.
-15. **Source-fidelity test before delivery**: Compare the completed report against the supplied report and captured evidence. Confirm that every concrete credential, secret, identifier, URL, hash, command argument, request body, response excerpt, PII value, and negative control remains verbatim and that no new redaction marker was introduced.
+15. **Fidelity and privacy test before delivery**: Compare the rewrite against supplied evidence for accurate non-secret endpoint, request, observation, and negative-control facts; require explicit value-source instructions for each placeholder. Check that no credential, secret, unrelated PII, or private raw response was copied. Do not silently strengthen the claim or overwrite the original.
 
 ### Knowledge-Assumption Audit
 
@@ -329,52 +300,51 @@ Before delivery, read only the submission file as a capable triager unfamiliar w
 
 If essential information is missing from the supplied evidence and cannot be established during authorized testing, do not invent it or pad the report with prose. Mark the report not ready and request the exact missing detail.
 
-Write the report to `<target-domain>-<vuln-type>.md` using the `Write` tool. Tell the user the filename and give a brief summary of what's in it.
+Write the experiment to the new upstream-style filename with the FID appended, using exclusive creation. Record the source report path and a non-secret change/readiness summary in its matching `_meta/*-TRIAGE.md`. Verify that both new files exist and that the input report and PoC were not modified. Give the user both absolute paths and a short comparison summary; never say it was submitted.
 
 ---
 
 ## PHASE 6: TRIAGE DECISION
 
-After writing the report, present this summary to the user in chat only. Never append it, or any other internal assessment, to the submission report file:
+After writing the experimental report, put this summary in the matching `_meta/*-TRIAGE.md` and give a compact version in chat. Never append it to the upstream-style report:
 
 ```
 TRIAGE DECISION
 ═══════════════
-Tested:      [YES — independently reproduced end to end / PARTIAL — specify verified steps / NO — assessed supplied evidence]
+Tested:      [NO — report-only source review / YES or PARTIAL — only if this run performed separately authorized testing]
 Validation:  [CONFIRMED / PARTIALLY CONFIRMED / UNVERIFIED / NOT REPRODUCIBLE]
 Submission:  [GREEN / YELLOW / RED]
 Severity:    [Original] → [Escalated]
-CVSS:        X.X — CVSS:3.1/AV:X/AC:X/PR:X/UI:X/S:X/C:X/I:X/A:X
+CVSS:        [only when required and evidence-supported]
 Confidence:  [HIGH / MEDIUM / LOW]
-Action:      [SUBMIT / STRENGTHEN / DO NOT SUBMIT]
-Bounty Est:  [$range]
-Report:      <target-domain>-<vuln-type>.md (ready to copy-paste)
+Action:      [REVIEW CANDIDATE / STRENGTHEN / DO NOT SUBMIT]
+Report:      <absolute path to the experiment's <target-domain>-<vuln-type>-<FID>.md>
 ```
 
 If RED: explain what's wrong and what would fix it.
 If YELLOW: explain what's borderline and whether escalation helped.
-If GREEN: tell them to submit.
+If GREEN: say the rewrite is a candidate for review; do not imply the original was replaced or a platform submission occurred.
 
 ---
 
 ## RULES
 
-1. **Independently test end to end when applicable.** For triage, validation, or escalation, reproduce the whole exploit and verify its effect within the authorization available. Never label a finding confirmed or submission-ready solely because the supplied report says it works. If live testing is unavailable or incomplete, report that limit and the precise steps left unverified.
+1. **Read-only by default.** Do not run a target interaction during a rewrite. For a separately authorized live validation task, independently verify the smallest safe boundary and effect; otherwise assess the existing provenance, label unverified links, and say this run did not test. Never label a finding confirmed solely because the draft asserts it.
 
-2. **Never submit a report you wouldn't bet the account on.** One N/A closure can lead to a ban. When in doubt, don't submit.
+2. **Do not submit from this skill.** A triage verdict and experimental rewrite are not platform submission or promotion to the canonical report.
 
 3. **Escalation is not fabrication.** Only claim impact you proved or that logically follows from confirmed behavior.
 
-4. **Use disposable accounts.** Create fresh test accounts via agent-email. Create multiple accounts when you need attacker/victim pairs.
+4. **Reuse approved owned fixtures.** Do not create accounts or use email during report-only rewriting. If a separate live task needs verification mail, use the authorized Composio connection only for the approved mailbox.
 
-5. **The report file is the deliverable for a submission-ready finding.** Output `<target-domain>-<vuln-type>.md` (e.g. `example-com-idor.md`) when the evidence supports submission. It must be copy-paste ready. For a finding that does not reproduce or lacks essential proof, state what is missing instead of dressing it up as a ready report.
+5. **The experimental file is the deliverable.** Require an exact FID packet; create one new `<target-domain>-<vuln-type>-<FID>.md` at the packet front door and one matching note under `_meta/`. Never touch the source report/PoC or silently version an existing experiment. For a finding with missing proof, retain only supported claims and name the gaps in the separate triage note; do not call the rewrite submission-ready.
 
-6. **Max impact, honest framing.** Pursue every credible escalation path that could materially change severity, including privilege, tenant scope, write access, persistence, and chaining. Seek the absolute highest severity the evidence supports. Frame the result in business terms and state the proof for each step.
+6. **Max impact, honest framing.** Reason about credible escalation paths, but claim only the strongest demonstrated impact. Separate untested chains and material limits in the triage note. Do not launch new probes for severity during a report-only experiment.
 
 7. **Dense reports win.** Triage teams skim. Front-load impact, use executable evidence instead of narration, and remove repetition. Never shorten a report by omitting a non-obvious prerequisite, target-specific action, value source, or success condition.
 
 8. **One vuln per report** unless bugs chain together for compound impact.
 
-9. **If it doesn't reproduce, say so immediately.** Don't waste time polishing a dead finding.
+9. **If prior proof fails a consistency check, say so.** A report-only rewrite cannot establish that a live finding is patched or dead; label what the evidence can and cannot support.
 
-10. **Save evidence as you go.** Screenshots, HTTP logs, and response data can support your work. Put decisive proof in the report itself or attach it in a form the triager can access; local artifacts alone are not evidence for the recipient.
+10. **Use existing shareable evidence.** The rewrite should contain only decisive sanitized proof or exact accessible attachment names; never duplicate restricted raw traffic or secret-bearing screenshots in the new run capsule.

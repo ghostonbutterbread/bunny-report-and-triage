@@ -9,3 +9,7 @@ reports/
 *.har
 *.pcap
 *.pcapng
+
+# Local contract-test cache.
+__pycache__/
+*.pyc
