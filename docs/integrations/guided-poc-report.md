@@ -7,8 +7,8 @@
 - **Intended integration target:** standalone fork `main`; Hoster opt-in trial only after review
 - **Last updated:** 2026-10-11
 - **Owning feature branch/ref:** `feat/guided-poc-report`
-- **Latest immutable recovery checkpoint:** `58b76123a4e9af38ec455e64e33f31bdacc3ca8b`
-- **Feature implementation commit(s):** `58b76123a4e9af38ec455e64e33f31bdacc3ca8b`
+- **Latest immutable recovery checkpoint:** `e9e5f35193a3afa9b17fde28d14de1a000892d10`
+- **Feature implementation commit(s):** `58b76123a4e9af38ec455e64e33f31bdacc3ca8b`, `e9e5f35193a3afa9b17fde28d14de1a000892d10`
 - **Inspiration / canonical references:** Ryu's Discord request `1558984140207030394`; existing `triager-first-poc-authoring` and `poc-tooling-policy` for reviewer-facing artifacts.
 
 ## Intent
@@ -19,14 +19,14 @@ Keep Bunny's upstream six-phase triage and validation pipeline, but change the f
 
 - The report's `Proof of Concept` subsection is always executable. Inline curl has no extra Manual Reproduction heading. A complex PoC is `reports/<FID>/poc.<ext>` with only required flags in the report and chronological manual alternative below.
 - A standalone PoC discovers owned fixture IDs, sequences requests, verifies the actual effect, handles controlled cleanup/manual handoffs, requests runtime auth, and supports an optional proxy. Its claims align with the manual replay and the report.
-- A narrow reviewer-input exception keeps reporter session Cookie and fixture IDs out of reviewer-run commands without changing factual exploit evidence. Other upstream source-fidelity behavior and the readiness STOP remain.
+- A narrow reviewer-input exception keeps reporter credentials and owned-fixture IDs out of reviewer-run commands while preserving material source proof, including negative controls. Unlike upstream's absolute verbatim treatment, required secret-bearing excerpts stop for explicit disclosure/redaction or a new authorized secret-free observation; they are not silently published or omitted. The readiness STOP remains.
 - Artifact creation/inspection is not blanket permission for new live target testing; existing authorization and scope still govern it. No pipeline auto-integration or external submission.
 
 ## Evidence and review
 
-- Test-first RED: new format contract assertions failed against the base skill as expected.
-- GREEN: `python3 -m unittest discover -s tests -q` passed 10 tests; `git diff --check` passed, in the isolated feature worktree.
-- Independent review: pending fresh reviewer verdict on committed branch.
+- Test-first RED: new format and reviewer-secret/fidelity contract assertions failed against the prior skill as expected.
+- GREEN: `python3 -m unittest discover -s tests -q` passed 12 tests; `git diff --check` passed, in the isolated feature worktree.
+- Independent review: initial verdict REVISE at `8d5e65e` for selective-quote fidelity, secret-bearing evidence handoff, and non-Cookie runtime authentication. These three points were corrected; fresh re-review pending.
 - Live target testing: not run; a future approved finding-specific trial must exercise the full workflow separately.
 
 ## Blockers and deferred work
@@ -40,8 +40,8 @@ Keep Bunny's upstream six-phase triage and validation pipeline, but change the f
 ## Interruption / resume handoff
 
 - **Owning feature branch/ref:** `feat/guided-poc-report`
-- **Latest immutable recovery checkpoint:** `58b76123a4e9af38ec455e64e33f31bdacc3ca8b`
-- **Feature implementation commit(s):** `58b76123a4e9af38ec455e64e33f31bdacc3ca8b`
+- **Latest immutable recovery checkpoint:** `e9e5f35193a3afa9b17fde28d14de1a000892d10`
+- **Feature implementation commit(s):** `58b76123a4e9af38ec455e64e33f31bdacc3ca8b`, `e9e5f35193a3afa9b17fde28d14de1a000892d10`
 - **Exact resume point:** Independent review of feature and dossier; publish standalone fork main and refresh Hoster trial only after accepted verdict.
 - **Working-tree state at handoff:** clean after dossier checkpoint.
 
@@ -53,4 +53,4 @@ Keep Bunny's upstream six-phase triage and validation pipeline, but change the f
 
 ## Decision record
 
-- 2026-10-11 — Feature prepared test-first; reviewer gate pending.
+- 2026-10-11 — Feature prepared test-first; initial independent reviewer returned REVISE on source-fidelity scope, secret-bearing evidence, and non-Cookie authentication. Focused correction committed at `e9e5f35193a3afa9b17fde28d14de1a000892d10`; fresh re-review pending.
