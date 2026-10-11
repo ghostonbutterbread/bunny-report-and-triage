@@ -1,14 +1,14 @@
 # Upstream-minimal Bunny triage integration dossier
 
-- **Status:** feature
+- **Status:** review-ready
 - **Owner:** Hermes Agent
 - **Branch:** `fix/upstream-minimal-adapters`
 - **Base commit:** `cd2a504aad6b344703c184f22716894bf554b20a`
 - **Intended integration target:** standalone fork `main` (`ghostonbutterbread/bunny-report-and-triage`), not BBH beta
 - **Last updated:** 2026-10-11
 - **Owning feature branch/ref:** `fix/upstream-minimal-adapters`
-- **Latest immutable recovery checkpoint:** none yet
-- **Feature implementation commit(s):** none yet
+- **Latest immutable recovery checkpoint:** `f92aa79abe0f5fc7c2fd9ea8b9cd4aa0fc203e76`
+- **Feature implementation commit(s):** `f92aa79abe0f5fc7c2fd9ea8b9cd4aa0fc203e76`
 - **Inspiration / canonical references:** `Sequester-AG/bug-bounty-triage` upstream `main` at `9684e1bfc876e841f9c789f0b258902b43d461e4`; Discord message `1558971123767713803`
 
 ## Intent
@@ -37,10 +37,10 @@ Retain the original report/description/target intake, live end-to-end validation
 ## Interruption / resume handoff
 
 - **Owning feature branch/ref:** `fix/upstream-minimal-adapters`
-- **Latest immutable recovery checkpoint:** none yet
-- **Feature implementation commit(s):** none yet
-- **Exact resume point:** commit focused changes, independently review exact diff, merge/push standalone fork main, refresh existing Hoster trial checkout, verify runtime skill links.
-- **Working-tree state at handoff:** intentionally uncommitted while preparing review.
+- **Latest immutable recovery checkpoint:** `f92aa79abe0f5fc7c2fd9ea8b9cd4aa0fc203e76`
+- **Feature implementation commit(s):** `f92aa79abe0f5fc7c2fd9ea8b9cd4aa0fc203e76`
+- **Exact resume point:** independently review exact committed diff, merge/push standalone fork main, refresh existing Hoster trial checkout, verify runtime skill links.
+- **Working-tree state at handoff:** clean after dossier checkpoint commit.
 
 ## Decision gates
 
@@ -50,4 +50,4 @@ Retain the original report/description/target intake, live end-to-end validation
 
 ## Decision record
 
-- 2026-10-11 — created from Ryu's narrow-restoration instruction; initial focused static checks pass.
+- 2026-10-11 — created from Ryu's narrow-restoration instruction; initial focused static checks pass. Implementation checkpoint `f92aa79abe0f5fc7c2fd9ea8b9cd4aa0fc203e76` is ready for independent review.
