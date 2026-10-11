@@ -7,22 +7,22 @@
 - **Intended integration target:** `ghostonbutterbread/bunny-report-and-triage` fork `main`, **not** BBH beta/main
 - **Last updated:** 2026-10-11
 - **Owning feature branch/ref:** `feat/bunny-fid-naming`
-- **Latest immutable recovery checkpoint:** `4c291216ca30466f96976eaf67c7df15335ce6ca`
-- **Feature implementation commits:** `eec100fd4a347569b8da4858b719e6a8f48b7a5e` (prior standalone adaptation cherry-picked), `4c291216ca30466f96976eaf67c7df15335ce6ca` (name and FID output)
+- **Latest immutable recovery checkpoint:** `516c08f917156dd2ae038e6c17f6302650df8b24`
+- **Feature implementation commits:** `eec100fd4a347569b8da4858b719e6a8f48b7a5e` (prior standalone adaptation cherry-picked), `4c291216ca30466f96976eaf67c7df15335ce6ca` (name and superseded FID-prefix output), `516c08f917156dd2ae038e6c17f6302650df8b24` (upstream basename + FID suffix)
 - **Inspiration/canonical references:** Sequester-AG/bug-bounty-triage MIT upstream, BBH `security-reporting` FID packet identity and `bounty-directory-structure-policy` for `_meta` notes.
 
 ## Intent
 
-Publish an actual named GitHub fork for an opt-in Hoster report rewrite trial. Keep the upstream triage/report method recognizable, adapt only host browser/mail/privacy boundaries and the experiment's output naming. Do not integrate with BBH reporting policies, Aiskillsync, canonical `SUBMISSION.md`, PoCs, or live testing by default.
+Publish an actual named GitHub fork for an opt-in Hoster report rewrite trial. Keep the upstream triage/report method and exact domain-class filename convention, changing its destination to the FID packet and appending the exact FID. Do not integrate with BBH reporting policies, Aiskillsync, canonical `SUBMISSION.md`, PoCs, or live testing by default.
 
 ## Implemented contract
 
-`$bunny-report-and-triage` takes one absolute `reports/<FID>/REPORT.md` or `SUBMISSION.md` path plus selected evidence. The exact FID is the directory name. It creates one separate, front-door `<FID>-<domain-slug>-<class-slug>-bunny-<UTC>-<unique>.md` in that packet and a matching `_meta/*-TRIAGE.md`; both exclusive-new, never overwriting existing artifacts. FID conflict or absent packet path blocks writing. Report-only mode does not contact a target. A separately authorized live task uses Hoster BBH Chromium Test and Composio mail, not upstream's agent-browser/agent-email.
+`$bunny-report-and-triage` takes one absolute `reports/<FID>/REPORT.md` or `SUBMISSION.md` path plus selected evidence. The exact FID is the directory name. It creates one separate, front-door `<target-domain>-<vuln-type>-<FID>.md` in that packet, preserving upstream's filename except for the appended FID, and a matching `_meta/*-TRIAGE.md`; both exclusive-new, never overwriting existing artifacts or silently suffixing a collision. FID conflict or absent packet path blocks writing. Report-only mode does not contact a target. A separately authorized live task uses Hoster BBH Chromium Test and Composio mail, not upstream's agent-browser/agent-email.
 
 ## Evidence and review
 
-- Tests: `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v` from the feature worktree: **6 passed** at implementation commit `4c291216ca30466f96976eaf67c7df15335ce6ca`; `git diff --cached --check` passed before commit.
-- Independent review: pending. The earlier standalone implementation `5bb4550` had a PASS review and synthetic Codex smoke on Hoster, but the renamed FID output needs fresh review and fresh smoke before deployment.
+- Tests: `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v` from the feature worktree: **6 passed** at corrected implementation commit `516c08f917156dd2ae038e6c17f6302650df8b24`; `git diff --cached --check` passed before commit.
+- Independent review: pending on the corrected FID-suffix commit. The earlier standalone implementation `5bb4550` had a PASS review and synthetic Codex smoke on Hoster, but the renamed/FID-suffix output needs fresh review and fresh smoke before deployment. The first review of superseded `4c29121` cannot approve this correction.
 - GitHub fork creation: GitHub API returned 202 for `ghostonbutterbread/bunny-report-and-triage`; readback returned 200, `fork=true`, parent `Sequester-AG/bug-bounty-triage`, public, main at `9684e1b` before any adaptation push.
 - Real report/target: none read, rewritten, or contacted in this task.
 
@@ -31,14 +31,14 @@ Publish an actual named GitHub fork for an opt-in Hoster report rewrite trial. K
 - **Missing evidence:** independently reviewed naming/path safety and a synthetic output smoke under the selected Hoster skill root.
 - **Command/fixture:** `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`; use a task-owned synthetic `reports/FID-42/REPORT.md` fixture for a Codex report-only invocation after deployment.
 - **Trigger:** after reviewer PASS, integration into fork main, remote readback, and Hoster fast-forward or fresh clone.
-- **Why:** static text tests cannot prove an agent writes an exclusive FID-prefixed file while preserving original report/PoC.
+- **Why:** static text tests cannot prove an agent writes an exclusive upstream-style filename with exact FID suffix while preserving the original report/PoC.
 - **Next:** review, integrate/push fork main, deploy Hoster, run synthetic smoke, verify source hash and only two new files.
 
 ## Interruption / resume handoff
 
 - **Owning feature branch/ref:** `feat/bunny-fid-naming`
-- **Latest immutable recovery checkpoint:** `4c291216ca30466f96976eaf67c7df15335ce6ca`
-- **Feature implementation commits:** `eec100fd4a347569b8da4858b719e6a8f48b7a5e`, `4c291216ca30466f96976eaf67c7df15335ce6ca`
+- **Latest immutable recovery checkpoint:** `516c08f917156dd2ae038e6c17f6302650df8b24`
+- **Feature implementation commits:** `eec100fd4a347569b8da4858b719e6a8f48b7a5e`, `4c291216ca30466f96976eaf67c7df15335ce6ca` (superseded naming), `516c08f917156dd2ae038e6c17f6302650df8b24` (current correction)
 - **Exact resume point:** request fresh independent read-only review of the committed implementation; if accepted, stage merge into fork main and exclude this dossier from the integration tree.
 - **Working-tree state:** clean after this dossier is committed.
 
@@ -50,4 +50,4 @@ Publish an actual named GitHub fork for an opt-in Hoster report rewrite trial. K
 
 ## Decision record
 
-- 2026-10-11 — fork created under requested name; FID-prefixed experimental artifact chosen to improve packet-level discoverability without touching canonical stages.
+- 2026-10-11 — fork created under requested name. Initial FID-prefixed/bunny-timestamp artifact was superseded by Ryushe's correction: preserve the upstream `<target-domain>-<vuln-type>` basename and append the exact FID before `.md` in `reports/<FID>/`.
