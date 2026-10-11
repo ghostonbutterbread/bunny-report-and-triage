@@ -47,9 +47,13 @@ class SkillContract(unittest.TestCase):
             "bbh --root", "bbh --print-command", "/bin/bash -lc",
             "hoster-ssh", "never run the provisioner from bare SSH",
             "require a real `reports/<FID>/` parent",
-            "require the packet's parent to be named `reports`",
+            "require its `reports` parent to be a real, approved directory, not a symlink",
             "Reject a symlinked source, packet, `_meta`, or candidate output",
-            "create both new files exclusively", "if this exact filename already exists, stop and ask",
+            "Preflight **both** intended filenames for absence",
+            "Create the private triage note first, then the visible report",
+            "using exclusive creation for each",
+            "remove only this run's newly created file(s) after checking their exact path and file identity",
+            "if either exact filename already exists, stop and ask",
             "if the source lacks a valid FID packet path, **stop for the packet path**",
         ):
             self.assertIn(text.lower(), self.skill.lower(), text)
