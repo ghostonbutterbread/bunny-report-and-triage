@@ -1,6 +1,6 @@
 # Upstream-minimal Bunny triage integration dossier
 
-- **Status:** review-ready
+- **Status:** review-accepted
 - **Owner:** Hermes Agent
 - **Branch:** `fix/upstream-minimal-adapters`
 - **Base commit:** `cd2a504aad6b344703c184f22716894bf554b20a`
@@ -22,7 +22,7 @@ Retain the original report/description/target intake, live end-to-end validation
 ## Evidence and review
 
 - Tests and commands: six static contract checks pass with `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`; `git diff --check` passes. Inspect `git diff upstream/main HEAD -- SKILL.md` for the exact upstream-to-fork adapter changes; do not infer substantive changes from the prior fork's commit diff.
-- Independent review: REVISE for an ambiguous/mismatched diff-count receipt in this dossier only; skill and README passed the requested upstream-parity review. This receipt was corrected and awaits focused re-review.
+- Independent review: initial REVISE for an inaccurate diff-count receipt in this dossier only; the corrected tip `f1a82128ec4227c6e6a81b14ff101d1713a946f1` received a fresh **PASS** with no file:line issues. Skill/README upstream parity and six static checks passed both reviews.
 - Replay/cohort/fixture evidence: no live target or PoC execution; static contract and direct upstream diff only.
 - Merge/ancestry evidence: feature based on clean `origin/main` at `cd2a504`.
 
@@ -39,7 +39,7 @@ Retain the original report/description/target intake, live end-to-end validation
 - **Owning feature branch/ref:** `fix/upstream-minimal-adapters`
 - **Latest immutable recovery checkpoint:** `f92aa79abe0f5fc7c2fd9ea8b9cd4aa0fc203e76`
 - **Feature implementation commit(s):** `f92aa79abe0f5fc7c2fd9ea8b9cd4aa0fc203e76`
-- **Exact resume point:** independently re-review corrected dossier, then merge/push standalone fork main, refresh existing Hoster trial checkout, verify runtime skill links.
+- **Exact resume point:** merge the accepted branch into standalone fork main while omitting this temporary dossier, push, refresh existing Hoster trial checkout, verify runtime skill links.
 - **Working-tree state at handoff:** clean after dossier checkpoint commit.
 
 ## Decision gates
@@ -52,3 +52,4 @@ Retain the original report/description/target intake, live end-to-end validation
 
 - 2026-10-11 — created from Ryu's narrow-restoration instruction; initial focused static checks pass. Implementation checkpoint `f92aa79abe0f5fc7c2fd9ea8b9cd4aa0fc203e76` is ready for independent review.
 - 2026-10-11 — independent review found only the inaccurate/ambiguous line-count receipt in this dossier; removed it without changing the skill, README, or tests. Fresh narrow review pending.
+- 2026-10-11 — fresh independent review PASS at `f1a82128ec4227c6e6a81b14ff101d1713a946f1`. Decision: integrate only into the standalone fork's `main`; remove this branch-local dossier in the integration operation. Live PoC execution remains a separate authorized trial, not a claim of this text review.
