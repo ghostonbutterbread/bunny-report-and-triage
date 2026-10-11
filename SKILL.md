@@ -30,7 +30,7 @@ $ARGUMENTS
 
 ## PHASE 1: INTAKE
 
-Extract from the provided vulnerability description and evidence (or a supplied report):
+Extract from the provided vulnerability description and evidence. For this trial, do not use an existing report or submission draft as input:
 
 - **FID**: exact finding ID from the approved `reports/<FID>/` packet; `EVIDENCE.md` and its referenced raw captures may be the only written input. No prior report, submission draft, or standalone PoC is required.
 - **Target**: domain, app, API
@@ -43,7 +43,7 @@ Extract from the provided vulnerability description and evidence (or a supplied 
 - **Target-specific prerequisites**: product version/build, feature location, required role, and how required authentication values are obtained
 - **Custom test infrastructure**: network placement, listeners/services, commands or scripts, ports, and replaceable values
 
-Identify the exact `reports/<FID>/` packet before writing. If a claimed FID conflicts with its directory name, or there is no approved real packet, ask rather than guessing the destination. Read only selected evidence and its necessary source pointers; do not import an earlier report or PoC when the trial calls for an evidence-only run. If information needed for a live test is missing, continue analyzing the supplied evidence and ask only for the specific missing input.
+Identify the exact `reports/<FID>/` packet before writing. If a claimed FID conflicts with its directory name, or there is no approved real packet, ask rather than guessing the destination. Read only the finding description, selected evidence, and necessary raw source pointers; do not import an earlier report or PoC. If information needed for a live test is missing, continue analyzing the supplied evidence and ask only for the specific missing input.
 
 ## SOURCE FIDELITY AND PRIVACY
 
@@ -199,7 +199,7 @@ When the program uses CVSS 3.1, calculate a score only for the demonstrated expl
 
 ## PHASE 5: GENERATE SUBMISSION REPORT
 
-Keep upstream's domain–vulnerability basename, append the exact finding ID, and write the **one** report to the approved packet, not the current working directory: `reports/<FID>/<target-domain>-<vuln-type>-<FID>.md`. For example, `reports/FID-42/api-example-com-idor-FID-42.md` for IDOR on `api.example.com`. Derive the name from the target domain (dots replaced with dashes) and vulnerability class; do not invent a class or normalize the FID. If the target, class, or exact packet is unknown, ask. Require an existing real `reports/<FID>/` directory under an approved real `reports/` parent. Reject symlinked packet/output components and a path outside that packet. If the exact file exists, stop; do not overwrite it, invent a version, or edit an earlier finding's report. Use exclusive creation for the single file and verify its path and contents. No intermediate report, submission file, separate triage note, or BBH report writer is an input or output prerequisite.
+Keep upstream's domain–vulnerability basename, append the exact finding ID, and write the **one** report to the approved packet, not the current working directory: `reports/<FID>/<target-domain>-<vuln-type>-<FID>.md`. For example, `reports/FID-42/api-example-com-idor-FID-42.md` for IDOR on `api.example.com`. Derive the name from the target domain (dots replaced with dashes) and vulnerability class; do not invent a class or normalize the FID. If the target, class, or exact packet is unknown, ask. Require an existing real `reports/<FID>/` directory under an approved real `reports/` parent. Reject symlinked packet/output components and a path outside that packet. If the exact file exists, stop; do not overwrite it, invent a version, or edit an earlier finding's report. Create the one file **atomically and exclusively**, e.g. Python `with open(output_path, "x", encoding="utf-8") as f: f.write(report_text)` (or `O_CREAT|O_EXCL`); stop on `FileExistsError`. Do not use a normal Write/Edit operation that can replace an existing file. Read back the exact path and contents. No intermediate report, submission file, separate triage note, or BBH report writer is an input or output prerequisite.
 
 The report must be:
 - **Straight to the point** — No filler, no "I discovered", no narrative storytelling
@@ -290,13 +290,13 @@ Before delivery, read only the submission file as a capable triager unfamiliar w
 
 If essential information is missing from the supplied evidence and cannot be established during authorized testing, do not invent it or pad the report with prose. Mark the report not ready and request the exact missing detail.
 
-Write only `reports/<FID>/<target-domain>-<vuln-type>-<FID>.md` using exclusive creation. Tell the user the absolute filename and give a brief summary of what's in it. A trial draft that fails the readiness gate is not copy-paste-ready even when it uses this report format.
+When a report is warranted, write only `reports/<FID>/<target-domain>-<vuln-type>-<FID>.md` using exclusive creation. Tell the user the absolute filename and give a brief summary of what's in it. A trial draft that fails the readiness gate is not copy-paste-ready even when it uses this report format; if no report is warranted, proceed directly to the chat-only verdict with `Report: none`.
 
 ---
 
 ## PHASE 6: TRIAGE DECISION
 
-After writing the report, present this summary to the user in chat only. Never append it, or any other internal assessment, to the submission report file:
+After the readiness decision, present this summary to the user in chat only, **even if the gate stopped report creation**. Never append it, or any other internal assessment, to the submission report file:
 
 ```
 TRIAGE DECISION
@@ -308,7 +308,7 @@ Severity:    [Original] → [Escalated]
 CVSS:        [only when used and evidence-supported]
 Confidence:  [HIGH / MEDIUM / LOW]
 Action:      [REVIEW CANDIDATE / STRENGTHEN / DO NOT SUBMIT]
-Report:      reports/<FID>/<target-domain>-<vuln-type>-<FID>.md (absolute path)
+Report:      [absolute reports/<FID>/<target-domain>-<vuln-type>-<FID>.md path / none if no file was written]
 ```
 
 If RED: explain what's wrong and what would fix it.

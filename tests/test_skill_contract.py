@@ -27,8 +27,9 @@ class SkillContract(unittest.TestCase):
         self.assertIn("### Remediation", self.skill)
 
     def test_evidence_only_intake_no_old_stage_files(self):
-        for text in ("`EVIDENCE.md`", "No prior report, submission draft, or standalone PoC is required", "Writing a report from evidence does not authorize target contact", "do not import an earlier report or PoC", "Distinguish prior evidence from testing by this run"):
+        for text in ("`EVIDENCE.md`", "do not use an existing report or submission draft as input", "No prior report, submission draft, or standalone PoC is required", "Writing a report from evidence does not authorize target contact", "do not import an earlier report or PoC", "Distinguish prior evidence from testing by this run"):
             self.assertIn(text.lower(), (self.skill + self.readme).lower())
+        self.assertNotIn("(or a supplied report)", self.skill)
         self.assertNotIn("`REPORT.md` or `SUBMISSION.md`", self.skill)
         self.assertNotIn("finding_submission.py", self.skill)
 
@@ -40,13 +41,13 @@ class SkillContract(unittest.TestCase):
         self.assertNotIn("SOURCE FIDELITY — NEVER REDACT", self.skill)
 
     def test_single_exclusive_report_in_exact_fid_packet(self):
-        for text in ("reports/<FID>/<target-domain>-<vuln-type>-<FID>.md", "reports/FID-42/api-example-com-idor-FID-42.md", "Use exclusive creation", "If the exact file exists, stop", "Reject symlinked packet/output components", "triage commentary and the GREEN/YELLOW/RED verdict stay in chat"):
+        for text in ("reports/<FID>/<target-domain>-<vuln-type>-<FID>.md", "reports/FID-42/api-example-com-idor-FID-42.md", 'open(output_path, "x"', "stop on `FileExistsError`", "If the exact file exists, stop", "Reject symlinked packet/output components", "triage commentary and the GREEN/YELLOW/RED verdict stay in chat"):
             self.assertIn(text.lower(), (self.skill + self.readme).lower())
         self.assertNotIn("_meta/<target-domain>", self.skill)
         self.assertNotIn("current working directory.**", self.skill)
 
     def test_not_canonical_or_auto_submission(self):
-        for text in ("opt-in trial", "not a change to the standing BBH report pipeline", "No second report-writing stage", "do not claim it was submitted", "Do not register a new Aiskillsync bridge"):
+        for text in ("opt-in trial", "not a change to the standing BBH report pipeline", "No second report-writing stage", "do not claim it was submitted", "Do not register a new Aiskillsync bridge", "even if the gate stopped report creation", "Report: none"):
             self.assertIn(text.lower(), (self.skill + self.readme).lower())
 
 
