@@ -255,7 +255,7 @@ Use this structure as applicable. Put the executable PoC first, followed by manu
 
 **Severity**: [Critical|High|Medium|Low] (CVSS 3.1: X.X)
 **CVSS Vector**: `CVSS:3.1/AV:X/AC:X/PR:X/UI:X/S:X/C:X/I:X/A:X`
-**CWE**: CWE-XXX — [Name]
+**CWE**: CWE-XXX - [Name]
 **Asset**: `[affected URL/endpoint]`
 
 ### Summary
@@ -276,7 +276,7 @@ Use this structure as applicable. Put the executable PoC first, followed by manu
 ```bash
 python3 poc.py
 ```
-- `--proxy URL` — route all target requests through the reviewer's proxy (CLI PoCs)
+- `--proxy URL` - route all target requests through the reviewer's proxy (CLI PoCs)
 - [Other implemented flags only, with a short description; omit this bullet if none]
 
 [One sentence describing the decisive verified output; include exact runnable listener setup only when needed.]
@@ -289,8 +289,8 @@ python3 poc.py
 
 [Bullet points. What an attacker achieves. Business terms.]
 
-- [Primary impact — the worst thing that happens]
-- [Secondary impact — scope, scale, affected users]
+- [Primary impact - the worst thing that happens]
+- [Secondary impact - scope, scale, affected users]
 - [Regulatory/compliance impact if applicable]
 
 ### Remediation
@@ -320,6 +320,7 @@ For an inline curl PoC, omit the Manual Reproduction heading and put the request
 13. **Request format**: Prefer inline curl for a single fixed request with only a reviewer-supplied Cookie header as a runtime input. When IDs, tokens, dependent requests, or nontrivial setup would otherwise be manual variables, use the standalone guided PoC and put exact manual replay below it. Show only its one-line command and bullets for supported flags in Proof of Concept, not a transcript of its workflow. Include the method, endpoint, necessary headers/body, authentication source, and observed effect in the relevant section.
 14. **Paste test before delivery**: Read the entire report file as if selecting all and pasting it into the submission form. Remove template brackets, drafting instructions, internal caveat blocks, status labels, analyst commentary, local file references, escaped Markdown syntax, HTML spacing entities, and any outer code fence around the report. Keep only submission content and code fences needed for commands, requests, responses, or logs.
 15. **Source-fidelity test before delivery**: Compare the complete supplied report and captured evidence against the finished report and attachments. Confirm every material concrete proof value and negative control is present verbatim, not merely values already quoted in the draft. Also scan the whole finished report for live credentials, including authentication embedded in quoted request or response evidence. If a required excerpt carries a live secret, stop before publishing and request an explicit disclosure/redaction decision or an authorized secret-free proof; never silently omit or leak it. Remove only irrelevant incidental secrets from a draft, not material proof, and verify the result again. Only reviewer-run authentication and owned-fixture identifiers may be runtime inputs under the narrow exception above.
+16. **Hyphens, not em dashes**: In the submission report's authored prose and the Phase 6 triage summary, use ` - ` instead of an em dash, or rewrite the sentence. Check both outputs before delivery. Preserve literal commands, payloads, URLs, or quoted evidence exactly; typography does not override source fidelity.
 
 ### Knowledge-Assumption Audit
 
@@ -345,11 +346,11 @@ After writing the report, present this summary to the user in chat only. Never a
 ```
 TRIAGE DECISION
 ═══════════════
-Tested:      [YES — independently reproduced end to end / PARTIAL — specify verified steps / NO — assessed supplied evidence]
+Tested:      [YES - independently reproduced end to end / PARTIAL - specify verified steps / NO - assessed supplied evidence]
 Validation:  [CONFIRMED / PARTIALLY CONFIRMED / UNVERIFIED / NOT REPRODUCIBLE]
 Submission:  [GREEN / YELLOW / RED]
 Severity:    [Original] → [Escalated]
-CVSS:        X.X — CVSS:3.1/AV:X/AC:X/PR:X/UI:X/S:X/C:X/I:X/A:X
+CVSS:        X.X - CVSS:3.1/AV:X/AC:X/PR:X/UI:X/S:X/C:X/I:X/A:X
 Confidence:  [HIGH / MEDIUM / LOW]
 Action:      [SUBMIT / STRENGTHEN / DO NOT SUBMIT]
 Bounty Est:  [$range]

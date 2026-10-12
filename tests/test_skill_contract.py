@@ -135,6 +135,15 @@ class SkillContract(unittest.TestCase):
         self.assertIn("one command line", report_template)
         self.assertIn("#### Manual Reproduction", report_template)
 
+    def test_report_and_triage_output_use_hyphens_not_em_dashes(self):
+        report_template = self.skill.split("````text\n", 1)[1].split("\n````", 1)[0]
+        decision_template = self.skill.split("```\nTRIAGE DECISION\n", 1)[1].split("\n```", 1)[0]
+        self.assertNotIn("—", report_template)
+        self.assertNotIn("—", decision_template)
+        self.assertIn("use ` - ` instead", self.skill)
+        self.assertIn("literal commands, payloads, URLs, or quoted evidence", self.skill)
+        self.assertIn("no em dashes", self.readme)
+
     def test_readme_matches_fork_interfaces(self):
         self.assertIn("$bunny-report-and-triage", self.readme)
         self.assertIn("reports/D15/example-com-idor-D15.md", self.readme)
