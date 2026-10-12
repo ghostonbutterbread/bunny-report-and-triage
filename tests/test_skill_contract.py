@@ -75,7 +75,7 @@ class SkillContract(unittest.TestCase):
             "triager-first-poc-authoring", "poc.<ext>",
             "discover target-specific IDs", "send the dependent requests",
             "verify the claimed effect", "#### Manual Reproduction",
-            "minimal required flags", "same finding and observed effect",
+            "only required flags", "same finding and observed effect",
             "supports `--proxy URL`", "Cookie header for a session-based target",
         ):
             with self.subTest(phrase=phrase):
@@ -113,6 +113,24 @@ class SkillContract(unittest.TestCase):
             "do not claim an unrun artifact was live-tested",
         ):
             self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
+
+    def test_delegates_poc_authoring_and_requires_final_e2e_run(self):
+        for phrase in (
+            "MUST load `triager-first-poc-authoring`", "including inline `curl`",
+            "standalone `poc.<ext>`", "MUST execute the final reviewer-facing PoC end to end",
+            "not ready", "JSON Cookie", "If the skill is unavailable",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
+
+    def test_submission_format_has_bullet_prerequisites_and_command_flag_bullets(self):
+        report_template = self.skill.split("### Report Template", 1)[1].split("### Report Rules", 1)[0]
+        self.assertIn("**Prerequisites**\n- ", report_template)
+        self.assertIn("```bash\npython3 poc.py\n```", report_template)
+        self.assertIn("- `--proxy URL`", report_template)
+        self.assertIn("implemented flags", report_template)
+        self.assertIn("one command line", report_template)
+        self.assertIn("#### Manual Reproduction", report_template)
 
     def test_readme_matches_fork_interfaces(self):
         self.assertIn("$bunny-report-and-triage", self.readme)

@@ -103,10 +103,10 @@ If the PoC fails:
 
 Save the decisive screenshots or browser state through whichever browser you used. Save relevant HTTP exchanges and response data separately when they prove the finding. Include the decisive evidence in the report or attach it so the triager can access it.
 
-Choose the smallest reviewer-facing PoC after validating the actual effect:
+Choose the smallest reviewer-facing PoC after validating the actual effect. For any PoC authoring or revision, including inline `curl`, MUST load `triager-first-poc-authoring` and `poc-tooling-policy`; the former owns authoring, Cookie/JSON input, and final-artifact end-to-end readiness. Keep this fork's inline-versus-standalone threshold and `reports/<FID>/` destination. If the skill is unavailable, stop before calling the PoC or report ready and name the missing dependency; do not improvise a replacement.
 
 - Prefer inline `curl` in the report when a single request has a fixed destination and body, needs no discovered IDs or dependent setup, and requires at most only a reviewer-supplied Cookie header. The curl, observed response, and success condition together are the PoC; do not create a redundant file.
-- If reproduction needs any other reviewer-specific value (such as project or environment IDs), multiple dependent requests, or nontrivial stateful setup, write a guided standalone `poc.<ext>` alongside the report under `reports/<FID>/`. Do not wrap a long curl sequence in a script that still makes the reviewer find the IDs: discover target-specific IDs from authorized owned fixtures, send the dependent requests in order, verify the claimed effect rather than an HTTP status alone, and clean up only PoC-created state when safe. Use `triager-first-poc-authoring` and `poc-tooling-policy` when available; the behavior in this paragraph is required even when those local skills are unavailable. If an action cannot be automated safely, pause with an exact manual handoff and verify its outcome before proceeding. An authenticated CLI PoC prompts for the applicable reviewer authentication: the Cookie header for a session-based target, or a Bearer token or API key when the target uses one, rather than embedding the reporter's credential. It supports `--proxy URL` across all target requests; the report shows only required flags. Never hardcode a live session credential or expand the existing scope and authorization; authoring does not itself authorize a new live run.
+- If reproduction needs any other reviewer-specific value (such as project or environment IDs), multiple dependent requests, or nontrivial stateful setup, author a guided standalone `poc.<ext>` alongside the report under `reports/<FID>/` by following `triager-first-poc-authoring`. The reviewer must not find IDs the PoC can derive: discover target-specific IDs from authorized owned fixtures, send the dependent requests in order, and verify the claimed effect rather than an HTTP status alone. Follow the owning skill for manual handoffs, safe cleanup, and JSON Cookie input. An authenticated CLI PoC obtains the Cookie header for a session-based target, or a Bearer token or API key when the target uses one, at runtime rather than embedding the reporter's credential; it supports `--proxy URL` across all target requests. Never hardcode a live session credential or expand the existing scope and authorization; authoring does not itself authorize a new live run.
 
 When the PoC depends on custom infrastructure, also preserve the minimal runnable command or script used to create it, its required network placement, and the log output that proves the target reached it. A description such as "configure a listener" is not reproducible setup.
 
@@ -146,7 +146,7 @@ A supported vulnerability is not yet submission-ready if a capable triager would
 - the decisive request, response, service log, and success condition; and
 - a clear indication of which addresses and values the triager must replace with their own.
 
-For a guided PoC, inspect the finished PoC's setup, requests, output, and failure paths against the recorded proof and the manual replay. Exercise offline checks and safe commands; re-run a live step only when current scope and side-effect controls permit it. Distinguish earlier observed evidence from a new PoC run: do not claim an unrun artifact was live-tested. If its required setup or claimed effect cannot be reproduced or independently justified, leave the finding YELLOW rather than presenting the package as immediately submittable.
+For a guided PoC, inspect the finished PoC's setup, requests, output, and failure paths against the recorded proof and the manual replay. MUST execute the final reviewer-facing PoC end to end under current scope and testing authorization, including its claimed effect check, before calling the PoC or submission package ready. Follow `triager-first-poc-authoring`'s exact-final-artifact readiness gate: an earlier manual reproduction or offline tests do not validate a newly written script. Distinguish earlier observed evidence from a new PoC run: do not claim an unrun artifact was live-tested. If this run is blocked by authorization, side effects, or missing prerequisites, mark the PoC not ready and leave the finding YELLOW rather than presenting the package as immediately submittable.
 
 Do not add tutorials for standard tools. Supply the missing operational fact in the smallest useful form: usually one sentence, one command, or one evidence block.
 
@@ -248,9 +248,9 @@ The report must be:
 
 ### Report Template
 
-Use this structure as applicable. Put the executable PoC first, followed by manual replay only when a standalone PoC exists. Keep the decisive evidence beside the step that produced it rather than duplicating it across both sections:
+Use this structure as applicable. Put the executable PoC first, followed by manual replay only when a standalone PoC exists. The command and flag block below illustrates the standalone Python branch only: replace it with the exact single-line invocation and bullet points for implemented flags of the actual artifact; use the inline `curl` branch instead for a fixed request. Keep the decisive evidence beside the step that produced it rather than duplicating it across both sections:
 
-```
+````text
 ## [Specific Vulnerability Title Showing Max Impact]
 
 **Severity**: [Critical|High|Medium|Low] (CVSS 3.1: X.X)
@@ -264,11 +264,22 @@ Use this structure as applicable. Put the executable PoC first, followed by manu
 
 ### Reproduction
 
-Prerequisites: [Affected version/build, role, feature location, authentication source, network placement. Omit facts obvious to a security triager.]
+**Prerequisites**
+- [Affected version/build and feature location, only when non-obvious]
+- [Required role and how the reviewer obtains authentication]
+- [Network placement or listener setup, only when applicable]
 
 #### Proof of Concept
 
-[Inline curl with reviewer-supplied Cookie header when one fixed request suffices; otherwise name the attached poc.<ext>, show one invocation with minimal required flags (not IDs the PoC can discover), and explain its decisive output and any real manual handoff. If custom infrastructure is required, include its runnable setup and expected startup indication here.]
+[For an inline fixed request, replace the following command and flag bullets with the one-line curl and its observed effect. For a standalone PoC, attach poc.<ext> and use exactly one command line with only required flags; the script prompts privately for reviewer auth and discovers owned IDs.]
+
+```bash
+python3 poc.py
+```
+- `--proxy URL` — route all target requests through the reviewer's proxy (CLI PoCs)
+- [Other implemented flags only, with a short description; omit this bullet if none]
+
+[One sentence describing the decisive verified output; include exact runnable listener setup only when needed.]
 
 #### Manual Reproduction
 
@@ -288,9 +299,9 @@ Prerequisites: [Affected version/build, role, feature location, authentication s
 
 - [Primary fix]
 - [Alternative mitigation if applicable]
-```
+````
 
-For an inline curl PoC, omit the Manual Reproduction heading and put the request, observed result, and success condition together in Proof of Concept. For a standalone PoC, attach the actual `poc.<ext>` and show only its minimal required flags; do not ask for project IDs, action tokens, or other values the script can derive. Put numbered manual steps underneath as an alternative replay, not a duplicate explanation of the script's guided output. Both paths must prove the same finding and observed effect, and any reviewer-visible output must distinguish a verified effect from a request that merely returned success.
+For an inline curl PoC, omit the Manual Reproduction heading and put the request, observed result, and success condition together in Proof of Concept. For a standalone PoC, attach the actual `poc.<ext>` and give one command line such as `python3 poc.py`, using only required flags in the invocation; immediately beneath it, list each supported, relevant implemented flag in bullet points (e.g. `--proxy URL`, `--verbose` only if present). Do not ask for project IDs, action tokens, or other values the script can derive. If a browser-only artifact cannot be invoked from a shell, name its exact browser entry action rather than inventing a Python command or CLI flags. Put numbered manual steps underneath as an alternative replay, not a duplicate explanation of the script's guided output. Both paths must prove the same finding and observed effect, and any reviewer-visible output must distinguish a verified effect from a request that merely returned success.
 
 ### Report Rules
 
@@ -306,7 +317,7 @@ For an inline curl PoC, omit the Manual Reproduction heading and put the request
 10. **Be concise without a word limit**: Remove filler, generic transitions, tutorial text, and repeated evidence. Keep every non-obvious detail needed to reproduce and assess the finding. Prefer a command or evidence block to a paragraph.
 11. **Make evidence accessible**: Include decisive request/response excerpts and observations in the report. If an attachment is needed, identify it by the exact attached filename and explain what it proves. Do not rely on local file paths, private lab URLs, or unexplained references unavailable to the triager.
 12. **Preserve material source evidence**: Account for all concrete supplied proof values and negative controls, not just selected excerpts; reproduce them exactly in the report or a triager-accessible attachment unless the user explicitly authorizes a specific redaction. In reviewer-run commands or PoC files, request the reviewer's authentication at runtime and discover reviewer-owned fixture IDs rather than copying the reporter's credentials or unrelated fixture IDs. Do not use this exception to change an exploit payload or observed result.
-13. **Request format**: Prefer inline curl for a single fixed request with only a reviewer-supplied Cookie header as a runtime input. When IDs, tokens, dependent requests, or nontrivial setup would otherwise be manual variables, use the standalone guided PoC and put exact manual replay below it. Include the method, endpoint, necessary headers/body, authentication source, and observed effect in the relevant section.
+13. **Request format**: Prefer inline curl for a single fixed request with only a reviewer-supplied Cookie header as a runtime input. When IDs, tokens, dependent requests, or nontrivial setup would otherwise be manual variables, use the standalone guided PoC and put exact manual replay below it. Show only its one-line command and bullets for supported flags in Proof of Concept, not a transcript of its workflow. Include the method, endpoint, necessary headers/body, authentication source, and observed effect in the relevant section.
 14. **Paste test before delivery**: Read the entire report file as if selecting all and pasting it into the submission form. Remove template brackets, drafting instructions, internal caveat blocks, status labels, analyst commentary, local file references, escaped Markdown syntax, HTML spacing entities, and any outer code fence around the report. Keep only submission content and code fences needed for commands, requests, responses, or logs.
 15. **Source-fidelity test before delivery**: Compare the complete supplied report and captured evidence against the finished report and attachments. Confirm every material concrete proof value and negative control is present verbatim, not merely values already quoted in the draft. Also scan the whole finished report for live credentials, including authentication embedded in quoted request or response evidence. If a required excerpt carries a live secret, stop before publishing and request an explicit disclosure/redaction decision or an authorized secret-free proof; never silently omit or leak it. Remove only irrelevant incidental secrets from a draft, not material proof, and verify the result again. Only reviewer-run authentication and owned-fixture identifiers may be runtime inputs under the narrow exception above.
 

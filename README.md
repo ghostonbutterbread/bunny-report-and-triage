@@ -38,7 +38,7 @@ git clone https://github.com/ghostonbutterbread/bunny-report-and-triage.git ~/.a
 
 ## Supporting skills and CLIs
 
-The full live-validation workflow uses the `chromium-test` skill for the provisioned Chromium browser and the `mail` skill for verification messages in approved owned mailboxes. Select account identities under `email-access-policy`; `mail` does not create disposable inboxes.
+The full live-validation workflow uses the `chromium-test` skill for the provisioned Chromium browser and the `mail` skill for verification messages in approved owned mailboxes. Select account identities under `email-access-policy`; `mail` does not create disposable inboxes. Authoring any reviewer PoC also requires `triager-first-poc-authoring` and `poc-tooling-policy`; the fork does not substitute its own PoC-authoring guidance when those skills are unavailable.
 
 ## Usage
 
@@ -59,7 +59,7 @@ reports/D15/example-com-idor-D15.md
 ```
 
 Internal triage commentary stays outside the submission file.
-The report's **Proof of Concept** section contains a runnable curl when one fixed request needs at most the reviewer's own Cookie header. It has no separate PoC file or Manual Reproduction heading. If the replay requires project IDs, dependent requests, or stateful setup, the agent writes a guided `poc.<ext>` beside the report under `reports/<FID>/`. The report shows the attached filename and invocation with only essential flags; a **Manual Reproduction** section below it documents chronological steps and decisive evidence. The script should discover owned-fixture IDs and verify the effect rather than merely sending requests. Reviewer authentication is supplied at runtime, not embedded in the shareable PoC or report command. This trial fork is not automatically integrated into the canonical BBH reporting pipeline.
+The report's **Prerequisites** are short bullet points. **Proof of Concept** contains a runnable curl when one fixed request needs at most the reviewer's own Cookie header; it has no separate PoC file or Manual Reproduction heading. If replay requires project IDs, dependent requests, or stateful setup, `triager-first-poc-authoring` guides a `poc.<ext>` beside the report under `reports/<FID>/`. The report shows one exact invocation (usually `python3 poc.py`) and bullet points for supported flags below it; **Manual Reproduction** follows with chronological steps and decisive evidence. The script should discover owned-fixture IDs, accept raw or JSON Cookie input privately, and verify the effect rather than merely sending requests. Its final artifact must have an authorized end-to-end run before the PoC or package is called ready. Reviewer authentication is supplied at runtime, not embedded in the shareable PoC or report command. This trial fork is not automatically integrated into the canonical BBH reporting pipeline.
 
 ## Repository contents
 
