@@ -38,7 +38,7 @@ git clone https://github.com/ghostonbutterbread/bunny-report-and-triage.git ~/.a
 
 ## Supporting skills and CLIs
 
-The full live-validation workflow uses the `chromium-test` skill for the provisioned Chromium browser and the `mail` skill for verification messages in approved owned mailboxes. Select account identities under `email-access-policy`; `mail` does not create disposable inboxes. Authoring any reviewer PoC also requires `triager-first-poc-authoring` and `poc-tooling-policy`; the fork does not substitute its own PoC-authoring guidance when those skills are unavailable.
+The full live-validation workflow uses the `chromium-test` skill for the provisioned Chromium browser and the `mail` skill for verification messages in approved owned mailboxes. Select account identities under `email-access-policy`; `mail` does not create disposable inboxes. Inline `curl` needs no PoC-authoring skill; it still needs authorized effect validation and reviewer-supplied authentication. A standalone PoC requires `triager-first-poc-authoring` and `poc-tooling-policy`; the fork does not substitute its own standalone authoring guidance when those skills are unavailable.
 
 ## Usage
 
