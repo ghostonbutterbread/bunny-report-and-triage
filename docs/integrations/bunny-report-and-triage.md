@@ -1,14 +1,14 @@
 # Bunny FID evidence intake integration dossier
 
-- **Status:** feature, review pending
+- **Status:** feature committed, review and synthetic smoke pending
 - **Owner:** Hermes / Ryushe
 - **Branch:** `feat/bunny-fid-naming`
 - **Base commit:** `71df577bfa52f46d767032acb2073ca2452b2e0b` (fetched `origin/main`, fast-forwarded from `6461ee3`)
 - **Intended integration target:** `ghostonbutterbread/bunny-report-and-triage` fork `main` (`origin/main`), not BBH beta/main
 - **Last updated:** 2026-10-13
 - **Owning feature branch/ref:** `feat/bunny-fid-naming`
-- **Latest immutable recovery checkpoint:** `71df577bfa52f46d767032acb2073ca2452b2e0b` (base; implementation commit pending)
-- **Feature implementation commit(s):** pending
+- **Latest immutable recovery checkpoint:** `1ba3f0a4fdfc34469d1f0d62a9a607e56b3e13a5`
+- **Feature implementation commit(s):** `1ba3f0a4fdfc34469d1f0d62a9a607e56b3e13a5`
 - **References:** prior branch dossier at `6461ee3`, BBH `security-reporting` EVIDENCE packet contract, upstream report filename with exact FID suffix
 
 ## Intent and implemented contract
@@ -32,8 +32,8 @@ The fork accepts an absolute `reports/<FID>/EVIDENCE.md` as the default report s
 ## Interruption / resume handoff
 
 - **Owning feature branch/ref:** `feat/bunny-fid-naming`
-- **Latest immutable recovery checkpoint:** `71df577bfa52f46d767032acb2073ca2452b2e0b` (replace with implementation SHA after commit)
-- **Feature implementation commit(s):** pending
+- **Latest immutable recovery checkpoint:** `1ba3f0a4fdfc34469d1f0d62a9a607e56b3e13a5`
+- **Feature implementation commit(s):** `1ba3f0a4fdfc34469d1f0d62a9a607e56b3e13a5`
 - **Exact resume point:** review committed diff and run synthetic agent invocation when available; no merge/push authorized here.
 - **Working-tree state at handoff:** expected clean after commit.
 
