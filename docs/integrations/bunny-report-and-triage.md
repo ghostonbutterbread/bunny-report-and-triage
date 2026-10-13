@@ -18,16 +18,16 @@ The fork accepts an absolute `reports/<FID>/EVIDENCE.md` as the default report s
 ## Evidence and review
 
 - `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`: 17/17 pass on worktree before commit.
-- `git diff --check`: pass.
+- Synthetic report-only agent smoke: verified. An agent loaded the feature skill and created only `reports/FID-42/api-fixture-invalid-idor-FID-42.md` from the local-only packet after a first run correctly blocked missing runnable setup. Parent read back the 72-line report, checked the four source SHA-256 hashes against the agent's before/after receipt, verified no `REPORT.md` or `SUBMISSION.md`, and confirmed the report limits its claim to the loopback fixture. The parent separately ran the fixture once to verify A→B and control responses before the report-only invocation; the agent did not run it. No external target action or submission occurred.
+- Rereview of `18b7a74` remains pending; publication and runtime projection still gated.
 - Origin main descended previous feature tip; `git merge --ff-only origin/main` moved this feature from `6461ee3` to `71df577`, retaining all later fork-main changes rather than restoring obsolete branch content.
 - Independent rereview of `bf3a3dd`: REVISE. Its prior symlink and no-report objections were resolved; it found an unconditional ban on private response content inconsistent with specifically approved non-authentication excerpts, and an over-restrictive ledger path rule that excluded BBH's canonical lane-root `ledgers/ledger.json`. The skill now gives one approval-limited, no-live-auth disclosure rule and explicitly permits only the linked canonical ledger lane or synthetic packet-local fixture ledger. Rereview of this correction pending.
 
 ## Blockers and deferred work
 
-- **Missing evidence:** a synthetic report-only *agent invocation* producing the exact FID-named file while leaving a synthetic source unchanged; static text-contract tests do not exercise agent judgment or writes.
-- **Command/fixture:** synthetic `reports/FID-42/EVIDENCE.md`, `proof/observation.md`, and mock `ledger.jsonl` under `/home/ryushe/.hermes/profiles/bugfix/cache/scratch/bunny-fid-smoke/`; invoke the installed fork skill in report-only mode, then compare hashes and file list. A pending-scaffold negative fixture should produce no report. `codex` was not installed; `claude -p ... --append-system-prompt-file <feature SKILL.md> --allowedTools Read,Write --permission-mode acceptEdits --max-turns 8` was attempted on the synthetic fixture but failed before any model/tool turn with HTTP 403 `oauth_not_allowed_for_organization` (zero input/output tokens, no artifact). This is not a successful smoke.
-- **Trigger:** once a capable authenticated agent CLI and isolated skill projection are available, before fork-main activation; never use a real target for this smoke.
-- **Next:** independent review and synthetic invocation, reconcile a fresh `origin/main`, integrate through fork main only on owner approval, test/read back/publish there, then decide activation separately. Do not merge or push from this subtask.
+- **Smoke evidence:** the synthetic report-only agent write succeeded at `reports/FID-42/api-fixture-invalid-idor-FID-42.md`; four source hashes matched before and after. Static tests do not substitute for independent review, installation/provenance, or a real finding proof check.
+- **Historical failed CLI attempt:** `codex` was not installed; `claude -p ... --append-system-prompt-file <feature SKILL.md> --allowedTools Read,Write --permission-mode acceptEdits --max-turns 8` failed before any model/tool turn with HTTP 403 `oauth_not_allowed_for_organization`. The later Hermes delegated-agent local-only smoke succeeded; the earlier CLI failure is not an active smoke blocker.
+- **Next gate:** independent rereview of `18b7a74`, fresh `origin/main` reconciliation, integration through fork main, then installed-skill provenance/activation validation. No real target needed for these gates.
 
 ## Interruption / resume handoff
 
