@@ -187,7 +187,7 @@ These are hypothesis prompts only in report-only mode. For a separately authoriz
 
 **SSRF**
 - External → Internal (hit 127.0.0.1, 169.254.169.254, internal hostnames)
-- HTTP only → File read (`file:///etc/passwd`)
+- HTTP-only fetch → other URI schemes, only under a separately authorized live test
 - Cloud metadata → Credential exposure (confirm only to the extent authorized)
 - Internal service → RCE (chain with unauthenticated internal services)
 
