@@ -18,17 +18,16 @@ class SkillContract(unittest.TestCase):
 
     def test_upstream_intake_and_six_phase_method(self):
         for phrase in (
-            "<bug bounty report, vulnerability description, or target URL + finding>",
-            "Extract from the provided report:",
+            "<absolute reports/<FID>/EVIDENCE.md path",
+            "Extract from the selected FID packet source",
             "PHASE 1: INTAKE", "PHASE 2: LIVE END-TO-END TESTING",
             "PHASE 3: SUBMISSION READINESS", "PHASE 4: ESCALATION",
             "PHASE 5: GENERATE SUBMISSION REPORT", "PHASE 6: TRIAGE DECISION",
-            "treat the supplied report as a lead, not proof",
-            "independently reproduce the finding end to end",
-            "If the PoC fails:", "If the report fails this gate, STOP",
-            "Independent end-to-end testing confirms the vulnerability and impact",
-            "systematically pursue the maximum defensible impact",
-            "test each chain live", "Knowledge-Assumption Audit",
+            "Skip Phase 2 entirely in report-only mode",
+            "separate assignment must explicitly authorize live testing",
+            "If the PoC fails:", "STOP before creating the FID-named output",
+            "Decisive cited prior proof", "reason about the maximum defensible impact",
+            "do not test a chain live", "Knowledge-Assumption Audit",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, self.skill)
@@ -40,7 +39,7 @@ class SkillContract(unittest.TestCase):
             "### Summary", "### Reproduction", "### Impact", "### Remediation",
             "Paste test before delivery", "Source-fidelity test before delivery",
             "Preserve material source evidence", "CVSS:        X.X",
-            "Bounty Est:  [$range]", "If GREEN: tell them to submit.",
+            "Bounty Est:  [$range]", "If GREEN: say the report is a candidate for review",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, self.skill)
@@ -57,10 +56,10 @@ class SkillContract(unittest.TestCase):
         path = "reports/<FID>/<target-domain>-<vuln-type>-<FID>.md"
         self.assertIn(path, self.skill)
         self.assertIn("reports/<FID>/", self.skill)
-        self.assertIn("Choose the smallest reviewer-facing PoC", self.skill)
+        self.assertIn("choose the smallest reviewer-facing PoC", self.skill)
         self.assertIn("alongside the report under `reports/<FID>/`", self.skill)
         self.assertNotIn("_meta/", self.skill)
-        self.assertNotIn("REPORT.md", self.skill)
+        self.assertIn("Existing `REPORT.md` or `SUBMISSION.md`", self.skill)
 
     def test_simple_replay_prefers_inline_curl_without_duplicate_manual_section(self):
         for phrase in (
@@ -110,7 +109,7 @@ class SkillContract(unittest.TestCase):
     def test_readiness_checks_final_reviewer_artifact(self):
         for phrase in (
             "inspect the finished PoC's setup, requests, output, and failure paths",
-            "do not claim an unrun artifact was live-tested",
+            "Do not execute it in report-only mode",
         ):
             self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
 
@@ -118,7 +117,7 @@ class SkillContract(unittest.TestCase):
         for phrase in (
             "For a standalone PoC, MUST load `triager-first-poc-authoring`",
             "Inline `curl` does not require `triager-first-poc-authoring`",
-            "standalone `poc.<ext>`", "MUST execute the final reviewer-facing PoC end to end",
+            "standalone `poc.<ext>`", "authorized final-artifact effect verification",
             "not ready", "JSON Cookie", "If the standalone authoring skill is unavailable",
         ):
             with self.subTest(phrase=phrase):
@@ -151,6 +150,32 @@ class SkillContract(unittest.TestCase):
         self.assertIn("`chromium-test`", self.readme)
         self.assertNotIn("agent-email-cli", self.readme)
         self.assertNotIn("agent-browser", self.readme)
+
+    def test_evidence_first_fid_source_and_legacy_compatibility(self):
+        for phrase in (
+            "reports/<FID>/EVIDENCE.md", "linked ledger context/proof",
+            "`## Claim and status`", "`Verified: ...`", "`## Evidence index`",
+            "exact, resolvable pointers", "independent effect verification",
+            "A `Pending` field", "stop before report creation",
+            "For legacy `REPORT.md` or `SUBMISSION.md` intake",
+            "do not infer evidence from neighboring findings",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase.lower(), self.skill.lower())
+        self.assertIn("Neither file is required or created for new findings", self.readme)
+
+    def test_exact_fid_report_only_no_canonical_output_or_overwrite(self):
+        for phrase in (
+            "directory's FID verbatim", "exact packet directory FID",
+            "reports/<FID>/<target-domain>-<vuln-type>-<FID>.md",
+            "Reject symlinked source", "crossing into another FID",
+            "create exclusively", "never overwrite or append a timestamp/version suffix",
+            "Do not create or edit `EVIDENCE.md`, `REPORT.md`, `SUBMISSION.md`",
+            "Read back the new report", "Do not contact a target, run a PoC",
+            "Tested:      [NO - report-only source review",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase.lower(), self.skill.lower())
 
 
 if __name__ == "__main__":
