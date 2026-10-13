@@ -20,7 +20,7 @@ The fork accepts an absolute `reports/<FID>/EVIDENCE.md` as the default report s
 - `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`: 17/17 pass on worktree before commit.
 - `git diff --check`: pass.
 - Origin main descended previous feature tip; `git merge --ff-only origin/main` moved this feature from `6461ee3` to `71df577`, retaining all later fork-main changes rather than restoring obsolete branch content.
-- Independent no-edit review: pending. No live target or real finding used.
+- Independent no-edit review of `3fc053d`: REVISE. It found contradictory demands to publish all material proof verbatim versus BBH's restricted-source boundary, an unclear symlink rule for intermediate proof components, and a Phase 6 instruction that implied a report existed even after RED/YELLOW. All three corrected on the owning feature branch; rereview pending. No live target or real finding used.
 
 ## Blockers and deferred work
 

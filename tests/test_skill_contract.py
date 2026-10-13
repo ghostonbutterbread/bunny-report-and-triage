@@ -37,8 +37,8 @@ class SkillContract(unittest.TestCase):
     def test_upstream_report_and_decision_gates(self):
         for phrase in (
             "### Summary", "### Reproduction", "### Impact", "### Remediation",
-            "Paste test before delivery", "Source-fidelity test before delivery",
-            "Preserve material source evidence", "CVSS:        X.X",
+            "Paste test before delivery", "Source-fidelity and privacy test before delivery",
+            "Preserve material shareable evidence", "CVSS:        X.X",
             "Bounty Est:  [$range]", "If GREEN: say the report is a candidate for review",
         ):
             with self.subTest(phrase=phrase):
@@ -92,12 +92,25 @@ class SkillContract(unittest.TestCase):
     def test_source_fidelity_checks_all_material_proof_and_stops_for_secrets(self):
         for phrase in (
             "including negative controls", "not merely the excerpts you chose to quote",
-            "stop before placing secret-bearing evidence in the paste-ready report",
-            "ask for an explicit disclosure or redaction decision",
-            "scan the whole finished report for live credentials",
+            "stop before placing it in the paste-ready report",
+            "Obtain an authorized secret-free observation",
+            "Scan the entire output for live credentials",
         ):
             with self.subTest(phrase=phrase):
                 self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
+
+    def test_private_evidence_and_red_gate_do_not_authorize_leaks(self):
+        for phrase in (
+            "never in BBH `EVIDENCE.md`", "outside shared report packets",
+            "approved private evidence location", "never authorizes copying a live credential",
+            "symlinks in intermediate directories and leaf files",
+            "Report: not created", "whether a report was created",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase.lower(), self.skill.lower())
+        self.assertNotIn("unless the user explicitly authorizes a specific redaction", self.skill)
+        self.assertNotIn("ask for an explicit disclosure/redaction decision", self.skill)
+        self.assertNotIn("After writing the report, present this summary", self.skill)
 
     def test_non_cookie_auth_is_provided_at_runtime_for_guided_poc(self):
         for phrase in (
@@ -168,7 +181,7 @@ class SkillContract(unittest.TestCase):
         for phrase in (
             "directory's FID verbatim", "exact packet directory FID",
             "reports/<FID>/<target-domain>-<vuln-type>-<FID>.md",
-            "Reject symlinked source", "crossing into another FID",
+            "every path component", "through another FID",
             "create exclusively", "never overwrite or append a timestamp/version suffix",
             "Do not create or edit `EVIDENCE.md`, `REPORT.md`, `SUBMISSION.md`",
             "Read back the new report", "Do not contact a target, run a PoC",
