@@ -92,8 +92,8 @@ class SkillContract(unittest.TestCase):
     def test_source_fidelity_checks_all_material_proof_and_stops_for_secrets(self):
         for phrase in (
             "including negative controls", "not merely the excerpts you chose to quote",
-            "stop before placing it in the paste-ready report",
-            "Obtain an authorized secret-free observation",
+            "stop before placing the restricted original in the paste-ready report",
+            "otherwise obtain an authorized secret-free observation",
             "Scan the entire output for live credentials",
         ):
             with self.subTest(phrase=phrase):
@@ -105,6 +105,8 @@ class SkillContract(unittest.TestCase):
             "approved private evidence location", "never authorizes copying a live credential",
             "symlinks in intermediate directories and leaf files",
             "Report: not created", "whether a report was created",
+            "<lane-root>/ledgers/ledger.json", "context/target_profile.json",
+            "unapproved** private response content", "specifically approves that excerpt",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase.lower(), self.skill.lower())
@@ -181,7 +183,7 @@ class SkillContract(unittest.TestCase):
         for phrase in (
             "directory's FID verbatim", "exact packet directory FID",
             "reports/<FID>/<target-domain>-<vuln-type>-<FID>.md",
-            "every path component", "through another FID",
+            "every path component", "Do not traverse another FID",
             "create exclusively", "never overwrite or append a timestamp/version suffix",
             "Do not create or edit `EVIDENCE.md`, `REPORT.md`, `SUBMISSION.md`",
             "Read back the new report", "Do not contact a target, run a PoC",
