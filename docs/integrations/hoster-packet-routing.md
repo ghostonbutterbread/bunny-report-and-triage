@@ -1,0 +1,9 @@
+# Hoster packet-routing skill handoff
+
+- Owner: Hermes bugfix profile. Branch: `feat/hoster-packet-routing-20261014`; base `origin/main` at `584af56018b7dc0116883bc3c3e55d66a681ec49`; intended integration ref: `main` (this fork has no beta branch). Stable integration is pending an explicit owner decision under branch-lifecycle policy.
+- Intent: update the canonical standalone Bunny fork skill to match the already active, packet-aware Hermes local skill: select a finding by ledger `report_dir`, preserve historical FID-only packets, place a standalone PoC beside EVIDENCE.md, and use the user's exact one-line paragraph instruction. Update README to remove conflicting FID-only examples and describe optional evidence attachments.
+- Scope: only SKILL.md, README.md, and this temporary dossier. No production packet migration or live target contact.
+- Verification: compare SKILL.md byte-for-byte against the already reviewed local profile skill; run static packet-path and paragraph assertions, `git diff --check`, and an independent read-only diff review before publishing.
+- Activation boundary: local feature work does not update Hoster. Hoster currently projects `~/.hermes/synced-skills/bunny-report-and-triage` to `~/projects/bunny-report-and-triage` on the older `main`. Integrate only after owner's main-lane approval, push and read back, then fast-forward Hoster's clean source and verify projected content. Do not swap a live selected source to an unreviewed feature branch.
+- Remaining blocker: need explicit decision to integrate into the standalone fork's `main`, since that is its only selected published lane. Until then, BBH/Core runtime activation may complete but Bunny skill parity is not established.
+- Next action: independently review the committed feature and ask for the main-lane decision if review passes.
