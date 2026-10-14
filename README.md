@@ -4,7 +4,7 @@
 
 It is designed to help an agent:
 
-- draft from populated `reports/<FID>/EVIDENCE.md` and linked ledger proof without live testing by default;
+- draft from populated `EVIDENCE.md` in the ledger-resolved finding packet and linked proof without live testing by default;
 - reproduce findings end to end only under a separate authorized live assignment;
 - separate observed evidence from inference;
 - reject weak or non-actionable reports before submission;
@@ -43,24 +43,24 @@ The full live-validation workflow uses the `chromium-test` skill for the provisi
 
 ## Usage
 
-Invoke the skill with an absolute source path inside the exact FID packet and its linked ledger context/proof:
+Invoke the skill with an absolute source path inside the ledger-resolved finding packet and its linked ledger context/proof:
 
 ```text
-Use $bunny-report-and-triage in report-only mode on <absolute path to reports/<FID>/EVIDENCE.md> and its linked ledger proof. Check the populated Verified claim and exact evidence-index pointers before writing. Do not test live. Create only reports/<FID>/<target-domain>-<vuln-type>-<FID>.md when supported; do not create REPORT.md or SUBMISSION.md.
+Use $bunny-report-and-triage in report-only mode on <absolute path to ledger-resolved EVIDENCE.md> and its linked ledger proof. Check the populated Verified claim and exact evidence-index pointers before writing. Do not test live. Create only <resolved-packet>/<target-domain>-<vuln-type>-<FID>.md when supported; do not create REPORT.md or SUBMISSION.md.
 ```
 
-An existing `reports/<FID>/REPORT.md` or `SUBMISSION.md` may instead be selected as a legacy source, provided its proof pointers resolve. Neither file is required or created for new findings. For separate live validation, provide current authorization, scope, and the unresolved proof question; absent that, the skill reads only existing evidence and labels unverified steps.
+An existing `REPORT.md` or `SUBMISSION.md` in the same packet may instead be selected as a legacy source, provided its proof pointers resolve. Neither file is required or created for new findings. For separate live validation, provide current authorization, scope, and the unresolved proof question; absent that, the skill reads only existing evidence and labels unverified steps.
 
 ## Output
 
-For a verified, populated finding with resolvable evidence-index pointers, the skill creates only one new Markdown report named from the target, vulnerability class, and **exact packet FID**, such as:
+For a verified, populated finding with resolvable evidence-index pointers, the skill creates only one new Markdown report named from the target, vulnerability class, and **exact ledger FID**, such as:
 
 ```text
-reports/D15/example-com-idor-D15.md
+reports/D15-api-idor/example-com-idor-D15.md
 ```
 
 It never overwrites a previous report, edits the source, ledger, PoC, or canonical files, or writes a report from a pending scaffold. Internal triage commentary stays outside the report file. Authored prose in the submission report and triage summary uses plain hyphens, no em dashes; literal commands, payloads, URLs, and quoted evidence stay unchanged.
-The report's **Prerequisites** are short bullet points. **Proof of Concept** uses a recorded fixed-request curl when appropriate; a recorded standalone `poc.<ext>` is referenced with its exact invocation and manual replay only when the existing evidence supports it. Report-only work neither authors nor executes a PoC. A separately authorized PoC-authoring task follows `triager-first-poc-authoring` and `poc-tooling-policy`, including final-artifact effect verification. Reviewer authentication is supplied at runtime, not embedded in the shareable report. This trial fork is not automatically integrated into the canonical BBH reporting pipeline.
+Keep each authored paragraph on one source line without manually wrapping it; preserve literal evidence line breaks. The report's **Prerequisites** are short bullet points. **Proof of Concept** uses a recorded fixed-request curl when appropriate; a recorded standalone `poc.<ext>` beside `EVIDENCE.md` is referenced with its exact invocation and manual replay only when the existing evidence supports it. Optional screenshots and supporting artifacts belong in `evidence/` and are described in `EVIDENCE.md`. Report-only work neither authors nor executes a PoC. A separately authorized PoC-authoring task follows `triager-first-poc-authoring` and `poc-tooling-policy`, including final-artifact effect verification. Reviewer authentication is supplied at runtime, not embedded in the shareable report. This trial fork is not automatically integrated into the canonical BBH reporting pipeline.
 
 ## Repository contents
 

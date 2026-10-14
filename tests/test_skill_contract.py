@@ -18,7 +18,7 @@ class SkillContract(unittest.TestCase):
 
     def test_upstream_intake_and_six_phase_method(self):
         for phrase in (
-            "<absolute reports/<FID>/EVIDENCE.md path",
+            "<absolute ledger-resolved EVIDENCE.md path",
             "Extract from the selected FID packet source",
             "PHASE 1: INTAKE", "PHASE 2: LIVE END-TO-END TESTING",
             "PHASE 3: SUBMISSION READINESS", "PHASE 4: ESCALATION",
@@ -52,14 +52,16 @@ class SkillContract(unittest.TestCase):
         for role in ("IDOR/BOLA", "Privilege escalation", "Access control", "Auth bugs"):
             self.assertIn(role, self.skill)
 
-    def test_report_and_optional_poc_in_exact_fid_packet(self):
-        path = "reports/<FID>/<target-domain>-<vuln-type>-<FID>.md"
+    def test_report_and_optional_poc_in_ledger_packet(self):
+        path = "<resolved-packet>/<target-domain>-<vuln-type>-<FID>.md"
         self.assertIn(path, self.skill)
-        self.assertIn("reports/<FID>/", self.skill)
+        self.assertIn("stored `report_dir`", self.skill)
         self.assertIn("choose the smallest reviewer-facing PoC", self.skill)
-        self.assertIn("alongside the report under `reports/<FID>/`", self.skill)
+        self.assertIn("alongside the report in the ledger-resolved finding packet", self.skill)
+        self.assertIn("Optional screenshots and supporting artifacts belong in `evidence/`", self.readme)
         self.assertNotIn("_meta/", self.skill)
         self.assertIn("Existing `REPORT.md` or `SUBMISSION.md`", self.skill)
+        self.assertNotIn("alongside the report under `reports/<FID>/`", self.skill)
 
     def test_simple_replay_prefers_inline_curl_without_duplicate_manual_section(self):
         for phrase in (
@@ -79,7 +81,7 @@ class SkillContract(unittest.TestCase):
         ):
             with self.subTest(phrase=phrase):
                 self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
-        self.assertIn("reports/<FID>/", self.skill)
+        self.assertIn("ledger-resolved FID packet destination", self.skill)
 
     def test_reviewer_runtime_inputs_do_not_embed_reporter_session(self):
         for phrase in (
@@ -160,15 +162,15 @@ class SkillContract(unittest.TestCase):
 
     def test_readme_matches_fork_interfaces(self):
         self.assertIn("$bunny-report-and-triage", self.readme)
-        self.assertIn("reports/D15/example-com-idor-D15.md", self.readme)
+        self.assertIn("reports/D15-api-idor/example-com-idor-D15.md", self.readme)
         self.assertIn("`mail`", self.readme)
         self.assertIn("`chromium-test`", self.readme)
         self.assertNotIn("agent-email-cli", self.readme)
         self.assertNotIn("agent-browser", self.readme)
 
-    def test_evidence_first_fid_source_and_legacy_compatibility(self):
+    def test_evidence_first_ledger_source(self):
         for phrase in (
-            "reports/<FID>/EVIDENCE.md", "linked ledger context/proof",
+            "ledger-resolved finding packet", "linked ledger context/proof",
             "`## Claim and status`", "`Verified: ...`", "`## Evidence index`",
             "exact, resolvable pointers", "independent effect verification",
             "A `Pending` field", "stop before report creation",
@@ -179,10 +181,16 @@ class SkillContract(unittest.TestCase):
                 self.assertIn(phrase.lower(), self.skill.lower())
         self.assertIn("Neither file is required or created for new findings", self.readme)
 
+    def test_historical_fid_only_packet_is_explicit_fallback(self):
+        self.assertIn("or a legacy `reports/<FID>/` packet", self.skill)
+        self.assertIn("when the stored path is absent", self.skill)
+        self.assertIn("verify that `evidence_path` is in that same packet", self.skill)
+        self.assertNotIn("Write exactly one new file at `reports/<FID>/", self.skill)
+
     def test_exact_fid_report_only_no_canonical_output_or_overwrite(self):
         for phrase in (
-            "directory's FID verbatim", "exact packet directory FID",
-            "reports/<FID>/<target-domain>-<vuln-type>-<FID>.md",
+            "FID verbatim from the canonical ledger", "exact ledger FID",
+            "<resolved-packet>/<target-domain>-<vuln-type>-<FID>.md",
             "every path component", "Do not traverse another FID",
             "create exclusively", "never overwrite or append a timestamp/version suffix",
             "Do not create or edit `EVIDENCE.md`, `REPORT.md`, `SUBMISSION.md`",
@@ -191,6 +199,11 @@ class SkillContract(unittest.TestCase):
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase.lower(), self.skill.lower())
+
+
+    def test_one_line_paragraph_contract(self):
+        self.assertIn("Keep paragraphs 1 line, don't manually create the line breaks.", self.skill)
+        self.assertIn("Preserve necessary line breaks in code, requests, responses, and other literal evidence.", self.skill)
 
 
 if __name__ == "__main__":
