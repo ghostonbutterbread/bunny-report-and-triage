@@ -205,6 +205,12 @@ class SkillContract(unittest.TestCase):
         self.assertIn("Keep paragraphs 1 line, don't manually create the line breaks.", self.skill)
         self.assertIn("Preserve necessary line breaks in code, requests, responses, and other literal evidence.", self.skill)
 
+    def test_report_prose_is_colloquial_but_precise(self):
+        audience = self.skill.split("## REPORT AUDIENCE AND INFORMATION DENSITY", 1)[1].split("## PHASE 1: INTAKE", 1)[0]
+        self.assertIn("Write colloquially", audience)
+        self.assertIn("plain, direct sentences", audience)
+        self.assertIn("every technical claim precise", audience)
+
 
 if __name__ == "__main__":
     unittest.main()
