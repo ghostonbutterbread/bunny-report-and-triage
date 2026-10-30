@@ -1,6 +1,8 @@
 # Submission package handoff
 
-- **Status:** feature
+- **Status:** review-ready
+- **Exact resume point:** merge ced49fa plus this review record to main, remove this dossier from main, then fast-forward the Hoster checkout
+- **Integration gate:** PASS. Merge to main and remove this dossier from main.
 - **Owner:** Hermes bugfix
 - **Branch:** feat/submission-package-handoff
 - **Base commit:** 2bb716b27ec824fbe732770f136b85374eb15316
@@ -25,9 +27,9 @@ Make `bunny-report-and-triage` discoverable as the submission writer, and tell a
 ## Evidence and review
 
 - Tests and commands: description-length check; `git diff --check`
-- Independent review: pending
+- Independent review: PASS on 2026-10-29 (deleg_1bbdb404). Fast-forward onto origin/main is safe. No contract contradiction or dropped safety boundary.
 - Replay/cohort/fixture evidence: none; text-only routing change
-- Merge/ancestry evidence: pending
+- Merge/ancestry evidence: feature tip contains origin/main 2bb716b
 
 ## Blockers and deferred work
 
@@ -54,3 +56,4 @@ Make `bunny-report-and-triage` discoverable as the submission writer, and tell a
 ## Decision record
 
 - 2026-10-29 — created for the submission-writer discovery and same-package PoC handoff.
+- 2026-10-29 — independent review PASS. Merge to main; do not leave this dossier on main.
