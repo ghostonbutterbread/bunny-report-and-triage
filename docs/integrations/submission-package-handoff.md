@@ -7,8 +7,8 @@
 - **Intended integration target:** main
 - **Last updated:** 2026-10-29
 - **Owning feature branch/ref:** feat/submission-package-handoff
-- **Latest immutable recovery checkpoint:** none yet
-- **Feature implementation commit(s):** none yet
+- **Latest immutable recovery checkpoint:** 59ea93f378ca36dcafa6f905cfecc1953cfeb7c3
+- **Feature implementation commit(s):** 59ea93f378ca36dcafa6f905cfecc1953cfeb7c3
 - **Inspiration / canonical references:** finding-to-report miss where the writer was listed as a triager and loaded only after it was named
 
 ## Intent
@@ -40,10 +40,10 @@ Make `bunny-report-and-triage` discoverable as the submission writer, and tell a
 ## Interruption / resume handoff
 
 - **Owning feature branch/ref:** feat/submission-package-handoff
-- **Latest immutable recovery checkpoint:** none yet
-- **Feature implementation commit(s):** none yet
-- **Exact resume point:** commit this dossier with the skill edit, then review before merging to main
-- **Working-tree state at handoff:** intentionally uncommitted until the implementation commit
+- **Latest immutable recovery checkpoint:** 59ea93f378ca36dcafa6f905cfecc1953cfeb7c3
+- **Feature implementation commit(s):** 59ea93f378ca36dcafa6f905cfecc1953cfeb7c3
+- **Exact resume point:** independent review of 59ea93f, then merge to main and fast-forward the Hoster checkout the skill symlink reads
+- **Working-tree state at handoff:** clean after this checkpoint commit
 
 ## Decision gates
 
