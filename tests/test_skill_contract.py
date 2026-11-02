@@ -44,6 +44,19 @@ class SkillContract(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, self.skill)
 
+    def test_triage_decision_includes_evidence_qualified_practical_path(self):
+        phase = self.skill.split("## PHASE 6: TRIAGE DECISION", 1)[1].split("## RULES", 1)[0]
+        template = phase.split("```\nTRIAGE DECISION\n", 1)[1].split("\n```", 1)[0]
+        self.assertLess(template.index("Action:"), template.index("Practical Exploitation Path:"))
+        self.assertLess(template.index("Practical Exploitation Path:"), template.index("Report:"))
+        for phrase in (
+            "attacker prerequisite", "victim interaction", "user or server impact",
+            "proven", "inferred", "untested", "Not established", "missing link",
+            "report-only", "chat-only",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, phase)
+
     def test_only_local_mail_and_chromium_interfaces(self):
         for phrase in ("email-access-policy", "**mail**", "**chromium-test**", "provisioned Chromium browser"):
             self.assertIn(phrase, self.skill)

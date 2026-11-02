@@ -370,8 +370,11 @@ CVSS:        X.X - CVSS:3.1/AV:X/AC:X/PR:X/UI:X/S:X/C:X/I:X/A:X
 Confidence:  [HIGH / MEDIUM / LOW]
 Action:      [REVIEW CANDIDATE / STRENGTHEN / DO NOT SUBMIT]
 Bounty Est:  [$range]
+Practical Exploitation Path: [concise, evidence-qualified path to user or server impact]
 Report:      <resolved-packet>/<target-domain>-<vuln-type>-<FID>.md (only if created)
 ```
+
+The chat-only Practical Exploitation Path is a concise, finding-specific overview using arrows: attacker prerequisite and action → victim interaction if required → concrete user or server impact. Omit victim interaction when unnecessary. Distinguish proven behavior and impact from inferred or untested delivery or effects; never imply an untested link was confirmed. If no practical path is supported, write `Not established` and name the missing link. In report-only mode, use recorded evidence and do not contact the target or run a PoC to fill this field. Keep it high-level; the report owns technical reproduction details.
 
 If RED: explain what's wrong and what would fix it.
 If YELLOW: explain what's borderline and whether escalation helped.
