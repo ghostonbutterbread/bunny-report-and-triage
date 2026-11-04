@@ -18,7 +18,7 @@ class SkillContract(unittest.TestCase):
         self.assertIn("victims, roles, and relationships", audience)
         readiness = self.skill.split("## PHASE 3: SUBMISSION READINESS", 1)[1].split("## PHASE 4:", 1)[0]
         xss = readiness.split("### XSS\n", 1)[1].split("### ", 1)[0]
-        for phrase in ("recorded vulnerable path", "observed result", "Developer tools", "finding owner for revalidation", "do not claim the effect was verified"):
+        for phrase in ("recorded vulnerable path", "observed result", "Developer tools", "does not prove XSS or an XSS-driven effect", "finding owner for revalidation", "do not claim the effect was verified"):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, xss)
 
