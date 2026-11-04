@@ -31,6 +31,7 @@ Write for a technically capable security triager who understands HTTP, curl or B
 - Write colloquially, like a person speaking to a technical triager: plain, direct sentences rather than stiff boilerplate, buzzwords, or legalese. Keep the tone professional and every technical claim precise.
 - Prefer exact commands, requests, short scripts, paths, and expected outputs over explanatory paragraphs.
 - Remove repetition, not operational detail. Reproduction completeness takes priority over brevity.
+- Do not narrate ownership or authorization of the tested account or behavior. Name victims, roles, and relationships when needed to understand or reproduce the finding.
 - A capable triager must not need to guess a target-specific step, invent custom infrastructure, or ask where a required value comes from.
 
 $ARGUMENTS
@@ -145,6 +146,10 @@ When the PoC depends on custom infrastructure, also preserve the minimal runnabl
 - Open redirect without chain
 - Host header injection without cache poisoning PoC
 - User enumeration alone (unless program explicitly accepts it)
+
+### XSS
+
+Show the recorded vulnerable path and its observed result as the proof of concept. Developer tools may inspect results or show requests, but JavaScript run independently in the console does not prove XSS or an XSS-driven effect. If the evidence does not connect the effect to the XSS path, return the gap to the finding owner for revalidation; do not claim the effect was verified.
 
 ### Reproduction-Completeness Gate
 
