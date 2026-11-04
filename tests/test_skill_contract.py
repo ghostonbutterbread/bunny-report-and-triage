@@ -12,6 +12,16 @@ class SkillContract(unittest.TestCase):
         cls.skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
         cls.readme = (ROOT / "README.md").read_text(encoding="utf-8")
 
+    def test_report_style_and_xss_attribution(self):
+        audience = self.skill.split("## REPORT AUDIENCE AND INFORMATION DENSITY", 1)[1].split("$ARGUMENTS", 1)[0]
+        self.assertIn("Do not narrate ownership or authorization", audience)
+        self.assertIn("victims, roles, and relationships", audience)
+        readiness = self.skill.split("## PHASE 3: SUBMISSION READINESS", 1)[1].split("## PHASE 4:", 1)[0]
+        xss = readiness.split("### XSS\n", 1)[1].split("### ", 1)[0]
+        for phrase in ("recorded vulnerable path", "observed result", "Developer tools", "finding owner for revalidation", "do not claim the effect was verified"):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, xss)
+
     def test_identity_and_license(self):
         self.assertTrue(self.skill.startswith("---\nname: bunny-report-and-triage\n"))
         self.assertIn("Copyright (c) 2026 Sequester-AG", (ROOT / "LICENSE").read_text())
