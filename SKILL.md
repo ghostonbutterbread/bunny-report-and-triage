@@ -306,7 +306,7 @@ python3 poc.py
 
 ### Impact
 
-[Bullet points. What an attacker achieves. Business terms.]
+[Bullet points. What an attacker achieves. Business terms. Cite a PoC step briefly, such as "as seen in PoC step 3"; do not retell the PoC.]
 
 - [Primary impact - the worst thing that happens]
 - [Secondary impact - scope, scale, affected users]
@@ -334,7 +334,7 @@ Keep paragraphs 1 line, don't manually create the line breaks. Preserve necessar
 6. **Placeholders must be actionable**: For every value the triager must replace, state what it represents and where to obtain it. Do not explain obvious substitutions repeatedly.
 7. **Keep proof beside the action**: For inline curl, put the decisive request and observed result in Proof of Concept. For a standalone file, give its expected verified output there and put the request/response sequence in Manual Reproduction. Do not duplicate the whole sequence in both sections.
 8. **Steps must not hide work**: In Manual Reproduction, use one numbered action per step when combining actions would make the reader infer missing setup or verification. Replace vague directions such as "authenticate," "capture," or "confirm" with the exact target-specific action.
-9. **Impact section leads with the strongest supported escalated impact**, not the base finding. Mark an inference as an inference; never present an untested chain as demonstrated.
+9. **Impact section leads with the strongest supported escalated impact**, not the base finding. Mark an inference as an inference; never present an untested chain as demonstrated. State what the attacker gets. A brief pointer such as "as seen in PoC step 3" is enough; do not retell the requests, script, or manual steps there.
 10. **Be concise without a word limit**: Remove filler, generic transitions, tutorial text, and repeated evidence. Keep every non-obvious detail needed to reproduce and assess the finding. Prefer a command or evidence block to a paragraph.
 11. **Make evidence accessible**: Include decisive request/response excerpts and observations in the report. If an attachment is needed, identify it by the exact attached filename and explain what it proves. Do not rely on local file paths, private lab URLs, or unexplained references unavailable to the triager.
 12. **Preserve material shareable evidence**: Account for concrete safe proof values and negative controls, not just selected excerpts; reproduce those values exactly in the report or an approved triager-accessible attachment. Keep restricted originals only in the approved private evidence location. Do not use a redaction or disclosure decision to put live authentication or unrelated private content in a shareable artifact. If the claim cannot stand on safe proof, stop rather than changing its observed result. In reviewer-run commands or PoC files, request the reviewer's authentication at runtime and discover reviewer-owned fixture IDs rather than copying reporter credentials or unrelated fixture IDs.
@@ -353,6 +353,7 @@ Before delivery, read only the submission file as a capable triager unfamiliar w
 - Does each decisive action have an adjacent success signal in a response, log, or state check?
 - Can the reader distinguish fixed evidence values from values they must replace?
 - Has duplicated explanation been removed while all non-obvious operational detail remains?
+- Does Impact state the outcome without retelling the PoC? A brief pointer such as "as seen in PoC step 3" is enough.
 
 If essential information is missing from the supplied evidence and cannot be established during authorized testing, do not invent it or pad the report with prose. Mark the report not ready and request the exact missing detail.
 
@@ -399,7 +400,7 @@ If GREEN: say the report is a candidate for review, not that a platform submissi
 
 5. **The FID-named report is the only new report artifact.** Output `<resolved-packet>/<target-domain>-<vuln-type>-<FID>.md` (e.g. `reports/D15-api-ssrf/api-target-io-ssrf-D15.md`) only when a populated verified claim and exact proof pointers support it. Never create `REPORT.md` or `SUBMISSION.md` for new findings. For a scaffold or missing essential proof, state the gap rather than dressing it up as a ready report.
 
-6. **Max impact, honest framing.** Pursue every credible escalation path that could materially change severity, including privilege, tenant scope, write access, persistence, and chaining. Seek the absolute highest severity the evidence supports. Frame the result in business terms and state the proof for each step.
+6. **Max impact, honest framing.** Pursue every credible escalation path that could materially change severity, including privilege, tenant scope, write access, persistence, and chaining. Seek the absolute highest severity the evidence supports. Frame the result in business terms and tie each escalation step to its proof. Cite that proof from Impact instead of explaining the PoC there.
 
 7. **Dense reports win.** Triage teams skim. Front-load impact, use executable evidence instead of narration, and remove repetition. Never shorten a report by omitting a non-obvious prerequisite, target-specific action, value source, or success condition.
 
