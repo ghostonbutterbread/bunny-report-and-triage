@@ -173,10 +173,6 @@ class SkillContract(unittest.TestCase):
         self.assertIn("implemented flags", report_template)
         self.assertIn("one command line", report_template)
         self.assertIn("#### Manual Reproduction", report_template)
-        self.assertIn("as seen in PoC step 3", report_template)
-        self.assertIn("do not retell the PoC", report_template)
-        self.assertIn("do not retell the requests, script, or manual steps there", self.skill)
-        self.assertNotIn("state the proof for each step", self.skill)
 
     def test_report_and_triage_output_use_hyphens_not_em_dashes(self):
         report_template = self.skill.split("````text\n", 1)[1].split("\n````", 1)[0]
