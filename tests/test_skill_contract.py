@@ -173,6 +173,11 @@ class SkillContract(unittest.TestCase):
         self.assertIn("implemented flags", report_template)
         self.assertIn("one command line", report_template)
         self.assertIn("#### Manual Reproduction", report_template)
+        self.assertIn('as seen in PoC step 3', report_template)
+        self.assertIn("do not retell the PoC", report_template)
+        self.assertIn("If the sentence still states the impact after that pointer is removed", self.skill)
+        self.assertIn("This citation limit is the Impact section only", self.skill)
+        self.assertNotIn("state the proof for each step", self.skill)
 
     def test_report_and_triage_output_use_hyphens_not_em_dashes(self):
         report_template = self.skill.split("````text\n", 1)[1].split("\n````", 1)[0]
