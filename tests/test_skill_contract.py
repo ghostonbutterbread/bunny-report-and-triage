@@ -12,6 +12,24 @@ class SkillContract(unittest.TestCase):
         cls.skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
         cls.readme = (ROOT / "README.md").read_text(encoding="utf-8")
 
+    def test_followup_route_keeps_style_proof_and_boundaries(self):
+        description = self.skill.split("description:", 1)[1].split("\n", 1)[0]
+        self.assertIn("follow-ups", description)
+        reply = self.skill.split("## Follow-ups and program comments", 1)[1].split("## Full report workflow", 1)[0]
+        for phrase in (
+            "actual question", "read the relevant exchange", "identify missing context",
+            "my report", "this report", "not by its report ID",
+            "one source line", "no em dashes", "Preserve literal shareable", "mask sensitive fields",
+            "only when it helps", "decisive observed result", "hosted artifact",
+            "recipient access", "Do not publish or host without authorization", "Never expose live credentials",
+            "triager-first-poc-authoring", "does not authorize live testing or external submission",
+            "not automatically to a follow-up",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, reply)
+        self.assertIn("## Submission package", self.skill)
+        self.assertIn("PHASE 1: INTAKE", self.skill)
+
     def test_report_style_and_xss_attribution(self):
         audience = self.skill.split("## REPORT AUDIENCE AND INFORMATION DENSITY", 1)[1].split("$ARGUMENTS", 1)[0]
         self.assertIn("Do not narrate ownership or authorization", audience)
@@ -28,7 +46,7 @@ class SkillContract(unittest.TestCase):
 
     def test_upstream_intake_and_six_phase_method(self):
         for phrase in (
-            "<absolute ledger-resolved EVIDENCE.md path",
+            "Require an exact, real ledger-linked finding packet and source path",
             "Extract from the selected FID packet source",
             "PHASE 1: INTAKE", "PHASE 2: LIVE END-TO-END TESTING",
             "PHASE 3: SUBMISSION READINESS", "PHASE 4: ESCALATION",

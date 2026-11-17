@@ -43,7 +43,9 @@ The full live-validation workflow uses the `chromium-test` skill for the provisi
 
 ## Usage
 
-Invoke the skill with an absolute source path inside the ledger-resolved finding packet and its linked ledger context/proof:
+For a triager follow-up or program comment, provide the relevant exchange and available report and proof. The skill answers in the original submission's concise voice without requiring a full report or posting the reply. It refers to the finding as "my report" or "this report," not by its report ID. A PoC is optional and follows the applicable authoring and authorization rules.
+
+For a new report, invoke the skill with an absolute source path inside the ledger-resolved finding packet and its linked ledger context/proof:
 
 ```text
 Use $bunny-report-and-triage in report-only mode on <absolute path to ledger-resolved EVIDENCE.md> and its linked ledger proof. Check the populated Verified claim and exact evidence-index pointers before writing. Do not test live. Create only <resolved-packet>/<target-domain>-<vuln-type>-<FID>.md when supported; do not create REPORT.md or SUBMISSION.md.
