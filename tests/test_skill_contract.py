@@ -92,6 +92,8 @@ class SkillContract(unittest.TestCase):
             "source and observation date", "root cause", "not a calculated probability",
             "chat, not in the paste-ready report", "do not contact the target",
             "already-local", "owner/demo", "fetch a platform/API",
+            "label an inferred accepted-versus-submission mapping as inferred",
+            "never treat total submissions minus accepted as the duplicate count",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, phase)
