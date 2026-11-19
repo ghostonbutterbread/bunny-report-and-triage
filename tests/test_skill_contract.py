@@ -85,6 +85,17 @@ class SkillContract(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, phase)
 
+    def test_duplicate_intelligence_is_local_optional_and_chat_only(self):
+        phase = self.skill.split("## PHASE 6: TRIAGE DECISION", 1)[1].split("## RULES", 1)[0]
+        for phrase in (
+            "duplicate-intelligence.md", "Duplicate risk:", "UNKNOWN", "not LOW",
+            "source and observation date", "root cause", "not a calculated probability",
+            "chat, not in the paste-ready report", "do not contact the target",
+            "already-local", "owner/demo", "fetch a platform/API",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, phase)
+
     def test_only_local_mail_and_chromium_interfaces(self):
         for phrase in ("email-access-policy", "**mail**", "**chromium-test**", "provisioned Chromium browser"):
             self.assertIn(phrase, self.skill)
