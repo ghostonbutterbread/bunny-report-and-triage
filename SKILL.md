@@ -386,11 +386,14 @@ Submission:  [GREEN / YELLOW / RED]
 Severity:    [Original] → [Escalated]
 CVSS:        X.X - CVSS:3.1/AV:X/AC:X/PR:X/UI:X/S:X/C:X/I:X/A:X
 Confidence:  [HIGH / MEDIUM / LOW]
+Duplicate risk: [HIGH / MEDIUM / LOW / UNKNOWN - concise evidence and source/date]
 Action:      [REVIEW CANDIDATE / STRENGTHEN / DO NOT SUBMIT]
 Bounty Est:  [$range]
 Practical Exploitation Path: [concise, evidence-qualified path to user or server impact]
 Report:      <resolved-packet>/<target-domain>-<vuln-type>-<FID>.md (only if created)
 ```
+
+Assess duplicate risk separately from whether the vulnerability is proven. If the program is known, consult `~/Shared/scopes/{program}/duplicate-intelligence.md` when present; use relevant target/category known-issue counts, disclosed reports, program duplicate-grouping rules, and confirmed local outcomes with source and observation date. Compare root cause and affected functionality, not just vulnerability labels or hostnames; do not attribute wildcard or program totals to a specific subdomain. Mark missing, stale, unmatched, or inadequate evidence UNKNOWN, not LOW. A high aggregate count is not a calculated probability or proof of a duplicate; label a platform-confirmed duplicate explicitly. Keep this assessment in chat, not in the paste-ready report, and do not contact the target in report-only mode.
 
 The chat-only Practical Exploitation Path is a concise, finding-specific overview using arrows: attacker prerequisite and action → victim interaction if required → concrete user or server impact. Omit victim interaction when unnecessary. Distinguish proven behavior and impact from inferred or untested delivery or effects; never imply an untested link was confirmed. If no practical path is supported, write `Not established` and name the missing link. In report-only mode, use recorded evidence and do not contact the target or run a PoC to fill this field. Keep it high-level; the report owns technical reproduction details.
 
