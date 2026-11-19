@@ -1,6 +1,6 @@
 ---
 name: bunny-report-and-triage
-description: "Use for submissions, triage, or program follow-ups."
+description: "Use for reports, triage, program follow-ups, or comments."
 argument-hint: "<report evidence and ledger context, or relevant follow-up exchange and proof>"
 allowed-tools: [Read, Glob, Grep, Bash, Write, Edit, Agent, WebFetch, WebSearch]
 ---
@@ -15,7 +15,7 @@ Write each authored prose paragraph on one source line and let the renderer wrap
 
 Include a PoC only when it helps the recipient reproduce or understand the point. Prefer a short request, `curl` command, or code snippet with required prerequisites and the decisive observed result. When custom infrastructure is needed, prefer an approved owned hosted artifact and a `curl` command pointing to it where feasible and helpful. Verify recipient access when possible and accurately state access, dependencies, and availability; do not imply an unverified URL is accessible. Do not publish or host without authorization. Never expose live credentials or private data, and do not claim an untested PoC was verified. Apply `poc-tooling-policy` and, for a standalone PoC, `triager-first-poc-authoring`; use the applicable existing proof-packaging guidance rather than inventing another threshold.
 
-Drafting a reply does not authorize live testing or external submission. Full-report intake, report-file requirements, and submission-package gates apply to a new report, not automatically to a follow-up.
+Before delivery, reread the reply for paste-ready wording, accuracy, accessible evidence, and necessary context. State whether it is a draft or was actually posted; drafting a reply does not authorize live testing or external submission. Full-report intake, report-file requirements, and submission-package gates apply to a new report, not automatically to a follow-up.
 
 ## Full report workflow
 

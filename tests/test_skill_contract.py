@@ -15,9 +15,12 @@ class SkillContract(unittest.TestCase):
     def test_followup_route_keeps_style_proof_and_boundaries(self):
         description = self.skill.split("description:", 1)[1].split("\n", 1)[0]
         self.assertIn("follow-ups", description)
+        self.assertIn("reports", description)
+        self.assertIn("comments", description)
         reply = self.skill.split("## Follow-ups and program comments", 1)[1].split("## Full report workflow", 1)[0]
         for phrase in (
             "actual question", "read the relevant exchange", "identify missing context",
+            "Before delivery, reread the reply", "whether it is a draft or was actually posted",
             "my report", "this report", "not by its report ID",
             "one source line", "no em dashes", "Preserve literal shareable", "mask sensitive fields",
             "only when it helps", "decisive observed result", "hosted artifact",
