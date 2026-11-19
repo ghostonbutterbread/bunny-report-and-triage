@@ -91,6 +91,7 @@ class SkillContract(unittest.TestCase):
             "duplicate-intelligence.md", "Duplicate risk:", "UNKNOWN", "not LOW",
             "source and observation date", "root cause", "not a calculated probability",
             "chat, not in the paste-ready report", "do not contact the target",
+            "already-local", "owner/demo", "fetch a platform/API",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, phase)
