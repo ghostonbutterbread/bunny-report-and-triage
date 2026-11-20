@@ -122,8 +122,9 @@ class SkillContract(unittest.TestCase):
 
     def test_simple_replay_prefers_inline_curl_without_duplicate_manual_section(self):
         for phrase in (
-            "#### Proof of Concept", "only a reviewer-supplied Cookie header",
-            "omit the Manual Reproduction heading", "no discovered IDs or dependent setup",
+            "#### Proof of Concept", "including a single ID",
+            "omit the Manual Reproduction heading", "browser-to-shell harvest",
+            "when a safe browser read is available", "otherwise give the exact alternative source",
         ):
             with self.subTest(phrase=phrase):
                 self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
@@ -132,7 +133,7 @@ class SkillContract(unittest.TestCase):
         for phrase in (
             "triager-first-poc-authoring", "poc.<ext>",
             "discover target-specific IDs", "send the dependent requests",
-            "verify the claimed effect", "#### Manual Reproduction",
+            "verify the claimed effect", "#### Manual Reproduction", "inline browser JavaScript",
             "only required flags", "same finding and observed effect",
             "supports `--proxy URL`", "Cookie header for a session-based target",
         ):
@@ -190,14 +191,14 @@ class SkillContract(unittest.TestCase):
     def test_delegates_poc_authoring_and_requires_final_e2e_run(self):
         for phrase in (
             "For a standalone PoC, MUST load `triager-first-poc-authoring`",
-            "Inline `curl` does not require `triager-first-poc-authoring`",
-            "standalone `poc.<ext>`", "authorized final-artifact effect verification",
-            "not ready", "JSON Cookie", "If the standalone authoring skill is unavailable",
+            "Inline `curl` needing reviewer-specific values also loads `triager-first-poc-authoring`",
+            "separate `poc.<ext>`", "authorized final-artifact effect verification",
+            "not ready", "JSON Cookie", "If the required authoring skill is unavailable",
         ):
             with self.subTest(phrase=phrase):
                 self.assertTrue(phrase in self.skill, f"Missing: {phrase}")
         self.assertNotIn("including inline `curl`, MUST load", self.skill)
-        self.assertIn("Inline `curl` needs no PoC-authoring skill", self.readme)
+        self.assertIn("Inline `curl` needing reviewer-specific values uses `triager-first-poc-authoring`", self.readme)
 
     def test_submission_format_has_bullet_prerequisites_and_command_flag_bullets(self):
         report_template = self.skill.split("### Report Template", 1)[1].split("### Report Rules", 1)[0]
